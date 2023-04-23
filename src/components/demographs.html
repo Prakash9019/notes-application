@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel = "stylesheet" href="./styles.css">
+        <title>EHR</title>
+    </head>
+    <body class="main-page">
+        <div class="top-layout">
+            <div class="t-left">
+                <img src="/images/logo-main.png" alt="logo">
+                <div class="title">Electronic Health Record</div>
+                </div>
+            <div class="t-right">
+                <div class="t-home">Home</div>
+                <div class="t-About">About Us</div>
+            </div>
+        </div>
+        <div class="left-layout">
+            <div class="left-section-link">
+                <div class="Demograph" onclick="location.href='demographs.html';">Profile</div>
+                <div class="vital" onclick="location.href='';">Vital Signs</div>
+                <div class="lab-test" onclick="location.href='/labtests_and_reports/labtests.html';">Lab tests</div>
+                <div class="Medical" onclick="location.href='labreports.html#crp';">Medical Records</div>
+                <div class="medications" onclick="location.href='labreports.html#crp';">Medicaions</div>
+            </div>
+        </div>
+            </div>
+        </div>
+            <div class="demo-display">
+                <form class="myform" id="ok">
+                <label for=name>Name:</label><input class="form-input" placeholder="Your name" type="text" name="name"><br>
+                <label for=age>Age:</label><input class="form-input"  type="text" placeholder="Enter your age">
+                <br>
+                <label for="aadhar">Aadhaar Number:</label><input class="form-input" type="text" name="aadhar" placeholder="Enter your Adhaar Number">
+                <br>
+                <label for="email">E-mail:</label><input class="form-input" type="text" name="email" placeholder="Enter your valid E-mail id">
+                <br>
+                <LABEL for="gnd"> Gender:</LABEL><input class="form-input" placeholder="Enter your Gender" type="text" id="gender" name="gnd" list="gender-option">
+                <datalist class="form-datalist" id="gender-option">
+                    <option value="male">
+                    <option value="female">
+                </datalist>
+                <br>
+                <label for="mart-st">Martial Status:</label><input class="form-input" placeholder="Martial-status" type="text" name="mart-st" list="martial-status-options">
+                 <datalist class="form-datalist" id="martial-status-options">
+                    <option value="notmarried">
+                    <option value="married">
+                </datalist><br>
+                <label for="inc">Income:</label><input class="form-input" placeholder="Income" type="text" name="inc" list="income-options">
+                <datalist id="income-options" class="form-datalist">
+                    <option value="Not working">
+                    <option value="below 2 lacks">
+                    <option value="2-7 lakhs">
+                    <option value="7-10 lakhs">
+                    <option value="Above 10 lakhs">
+                </datalist>
+                <br>
+                <label for="edc">Education:</label><input class="form-input" placeholder="Education details" type="text" name="edc" list="Education-options">
+                <datalist id="Education-options" class="form-datalist">
+                    <option value="10th">
+                    <option value="Intermediate">
+                    <option value="Degree">
+                </datalist><br>
+                <label for="emp">Employement:</label><input class="form-input" placeholder="Employement details" type="text" name="emp" list="Employement-options">
+                 <datalist id="Employement-options" class="form-datalist">
+                    <option value="public">
+                    <option value="Private sector">
+                    <option value="Unemployed">
+                </datalist>
+                <br>
+                <button type="submit">Update</button>
+                </form>
+            </form>
+            </div>
+        </body>
+</html>
