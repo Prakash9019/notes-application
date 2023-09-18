@@ -41,9 +41,7 @@ const AddNote = () => {
             
                 
                 <button disabled={note.title.length<5 || note.description.length<5} type="submit" className="btn btn-primary" onClick={handleClick}>Add Note</button>
-                <button disabled={note.title.length<5 || note.description.length<5} type="submit" className="btn btn-primary" onClick={change}>change</button>
-                <button  type="submit" className="btn btn-primary" onClick={handleClick}>edit</button>
-            </form>
+                </form>
         </div>
     )
 }
