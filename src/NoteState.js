@@ -1,5 +1,6 @@
 import  {useState} from "react";
 import  NoteContext from "./NoteContext";
+
 //import Notes from "./components/Notes";
 
 const NoteState=(props)=>{
@@ -21,7 +22,7 @@ const NoteState=(props)=>{
         setNotes(hello);
       }
 
-      const addNote = async (title,description,tag) => {
+      const addNote = async (title,description) => {
         // API Call 
         const response = await fetch(`${host}/api/notes/addnote`, {
           method: 'POST',
@@ -29,7 +30,7 @@ const NoteState=(props)=>{
             'Content-Type': 'application/json',
             "jwtData": localStorage.getItem('jwtData')
           },
-           body: JSON.stringify({title,description,tag})
+           body: JSON.stringify({title,description})
         });
         const note = await response.json() 
         setNotes(notes.concat(note));
@@ -51,15 +52,17 @@ const NoteState=(props)=>{
       }
 
      // Edit a Note
-  const editNote = async (Uid, title, description, tag) => {
+  const editNote = async (id,title,description) => {
+    console.log(id+title+description+"hel.....");
+   
     // API Call 
-    const response = await fetch(`${host}/api/notes/updatenote/:Uid`, {
+    const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         "jwtData": localStorage.getItem('jwtData')
       },
-      body: JSON.stringify({Uid,title, description, tag})
+      body: JSON.stringify({title, description})
     });
     const json = await response.json(); 
     console.log(json);
@@ -67,11 +70,12 @@ const NoteState=(props)=>{
      let newNotes = JSON.parse(JSON.stringify(notes))
     // Logic to edit in client
     for (let index = 0; index < newNotes.length; index++) {
+
       const element = newNotes[index];
-      if (element.Uid === Uid) {
+      if (element._id === id) {
+        console.log("hello");
         newNotes[index].title = title;
         newNotes[index].description = description;
-        newNotes[index].tag = tag; 
         break; 
       }
     }  

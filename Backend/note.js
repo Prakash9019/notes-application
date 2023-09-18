@@ -6,9 +6,6 @@ const NotesSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'             // works as foriegn key for the user.js file
     },
-    Uid:{
-        type:String
-    },
     title:{
         type: String,
         required: true
@@ -16,10 +13,6 @@ const NotesSchema = new Schema({
     description:{
         type: String,
         required: true, 
-    },
-    tag:{
-        type: String,
-        default: "General"
     },
     date:{
         type: Date,

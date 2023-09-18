@@ -14,9 +14,7 @@ app.use('/api/auth',require('./routers/auth.js'));
 app.use('/api/notes',require('./routers/notes'));
 
 
-app.get('/',(req,res)=>{
-    res.send("hello surya");
-})
+
 
 app.listen(PORT, () => {
     console.log(`inoteBook listening at http://localhost:${PORT}`);

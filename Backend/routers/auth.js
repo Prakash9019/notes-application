@@ -9,7 +9,6 @@ const jwt_s="surya";
 
 // user register
 router.post('/user',[
-    body('Uid').isLength({min:3}),
     body('username').isLength({min:3}),
     body('email').isEmail(),
     body('password').isLength({min:3})
@@ -31,7 +30,6 @@ router.post('/user',[
     // const user=User(req.body);    //this two lines are used to simply check the application with backend
     // user.save();
      user=await User.create({
-      Uid:req.body.Uid,
       username: req.body.username,
       email:req.body.email,
       password: secPass,
@@ -52,7 +50,6 @@ router.post('/user',[
 
 //for login
 router.post('/login',[
-  body('Uid').isLength({min:3}),
   body('email','enter a correct email').isEmail(),
   body('password','password cnt blank').exists(),
 ],async (req,res)=>{
@@ -62,7 +59,7 @@ router.post('/login',[
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const {Uid,email,password}=req.body;
+  const {email,password}=req.body;
   try{
   let user=await User.findOne({email});
   if(!user){

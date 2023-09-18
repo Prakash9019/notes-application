@@ -21,7 +21,7 @@ router.post('/addnote', fetchuser, [
   body('description', 'Description must be atleast 5 characters').isLength({ min: 5 }),], async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
-          const { Uid, title, description, tag } = req.body;
+          const { title, description} = req.body;
 
           // If there are errors, return Bad request and the errors
           const errors = validationResult(req);
@@ -31,7 +31,7 @@ router.post('/addnote', fetchuser, [
           //created a new note with "new" keyword
           //new note object  contain title...
           const note = new Note({
-               Uid ,title, description, tag, user: req.user.id
+               title, description, user: req.user.id
           })
           //saving the notes 
           const savedNote = await note.save()
@@ -45,34 +45,29 @@ router.post('/addnote', fetchuser, [
   })
 
   //  3: Update . Login required
-router.put('/updatenote/:Uid', fetchuser, async (req, res) => {
+router.put('/updatenote/:id', fetchuser, async (req, res) => {
   //The PUT method is used to modify a single resource. The POST method is used to add a child resource
   // same PUT request multiple times will always produce the same result 
- 
-  const {Uid,title, description, tag } = req.body;
+  const {title, description } = req.body;
   try {
       // Create a newNote object
       const newNote = {};
-      if(Uid) {newNote.Uid =Uid}
+     
       if (title) { newNote.title = title };
       if (description) { newNote.description = description };
-      if (tag) { newNote.tag = tag };
-      console.log(newNote)
-      console.log("...."+req.params.Uid);
       // Find the note to be updated and update it
       //getting the notes by findById method...
-      let note = await Note.findOneAndUpdate({Uid:Uid},req.body,{new:true});
-      console.log(note);
+      let note = await Note.findById(req.params.id);
       if (!note) { return res.status(404).send("Not Found") }
       console.log(req.user.id+"ok..");
       //matching the existing user id with the login id9
-      console.log(note.Uid + "   " +Uid);
-      if (note.Uid.toString() !== Uid) {     // checks whether the user login in is using his notes or other 
+    //  console.log(note.Uid + "   " +Uid);
+      if (note.user.toString() !== req.user.id) {     // checks whether the user login in is using his notes or other 
           return res.status(401).send("Not Allowed");
       }
       //find and update the data by findByIdandupdate
      // findByIdAndUpdate()
-      note = await Note.findOneAndUpdate(req.params.Uid, { $set: newNote }, { new: true })   //sending the new note in place of the old note
+      note = await Note.findOneAndUpdate(req.params.id, { $set: newNote }, { new: true })   //sending the new note in place of the old note
       res.json({ note });
   } catch (error) {
       console.error(error.message);
@@ -84,15 +79,15 @@ router.put('/updatenote/:Uid', fetchuser, async (req, res) => {
 router.delete('/deletenote/:id', fetchuser, async (req, res) => {
   try {
       // Find the note to be delete and delete it
-      let note = await Note.findById(req.params.Uid);
+      let note = await Note.findById(req.params.id);
       if (!note) { return res.status(404).send("Not Found") }
 
       // Allow deletion only if user owns this Note
-      if (note.user.toString() !== req.user.Uid) {
+      if (note.user.toString() !== req.user.id) {
           return res.status(401).send("Not Allowed");
       }
 
-      note = await Note.findByIdAndDelete(req.params.Uid)
+      note = await Note.findByIdAndDelete(req.params.id)
       res.json({ "Success": "Note has been deleted", note: note });
   } catch (error) {
       console.error(error.message);
