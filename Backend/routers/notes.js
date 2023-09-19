@@ -48,6 +48,7 @@ router.post('/addnote', fetchuser, [
 router.put('/updatenote/:id', fetchuser, async (req, res) => {
   //The PUT method is used to modify a single resource. The POST method is used to add a child resource
   // same PUT request multiple times will always produce the same result 
+
   const {title, description } = req.body;
   try {
       // Create a newNote object
@@ -58,8 +59,8 @@ router.put('/updatenote/:id', fetchuser, async (req, res) => {
       // Find the note to be updated and update it
       //getting the notes by findById method...
       let note = await Note.findById(req.params.id);
+      console.log(note._id);
       if (!note) { return res.status(404).send("Not Found") }
-      console.log(req.user.id+"ok..");
       //matching the existing user id with the login id9
     //  console.log(note.Uid + "   " +Uid);
       if (note.user.toString() !== req.user.id) {     // checks whether the user login in is using his notes or other 
@@ -67,7 +68,7 @@ router.put('/updatenote/:id', fetchuser, async (req, res) => {
       }
       //find and update the data by findByIdandupdate
      // findByIdAndUpdate()
-      note = await Note.findOneAndUpdate(req.params.id, { $set: newNote }, { new: true })   //sending the new note in place of the old note
+      note = await Note.findByIdAndUpdate(req.params.id, { $set: newNote }, { new: true })   //sending the new note in place of the old note
       res.json({ note });
   } catch (error) {
       console.error(error.message);

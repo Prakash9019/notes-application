@@ -3,7 +3,7 @@ import noteContext from "../NoteContext"
 
 const AddNote = () => {
   const context = useContext(noteContext);
-    const {addNote, editNote} = context;
+    const {addNote} = context;
  
     const [note, setNote] = useState({title: "", description: ""});
 
@@ -14,11 +14,6 @@ const AddNote = () => {
         setNote({title: note.title, description:note.description });
         // console.log(note);
         // console.log(note._id);
-    }
-
-    const change = (e)=>{ 
-        e.preventDefault();
-        editNote( note.title, note.description);
     }
   
 
