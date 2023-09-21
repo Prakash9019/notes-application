@@ -1,70 +1,38 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Creating a Todo App
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run both`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+Runs the server at the backend on [http://localhost:5000](http://localhost:5000) 
+
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Project Overview
 
-### `npm run build`
+Hello there!
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+I'm excited to present to you my Todo App project. This web application is designed to help users manage their tasks and stay organized. It allows users to create, update, and delete tasks, as well as mark them as completed. The app is built using JavaScript, HTML, and CSS, and it leverages the power of the browser's local storage to store the task data.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Features
+**User Registration** is completed he/she is directed to the page where there can add the notes.
+##Following are the options we can perform on:
+1. **Task Creation**: Users can easily create new tasks by entering a title and a description. Once created, the task is displayed in the task list.
+2. **Task Update**: Users can edit existing tasks to modify the title, description, or other details.
+3. **Task Deletion**: Users can delete tasks that are no longer needed. This action removes the task from the task list.
+4. **Task Completion**: Users can mark tasks as completed, providing a visual indication of their progress.
+5. **Persistent Data**: The app utilizes the browser's local storage to store the task data. This means that even if the user refreshes the page or closes the browser, their tasks will be saved and available upon returning to the app.
+**After completion**  of the work there can logout from the application,
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Code Explanation
 
-### `npm run eject`
+1. Nodejs and expressjs is used for running the server and mongodb to send and retrieve the data.
+2. I used **/login**,**/register**,**/addnote**,**/updatenote**,**/deletenote** router to login,register the user authentication and bcrypt to bcrypt the password for security purpose and add,update,delete are used to add,update,delete notes from the application.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
