@@ -17,5 +17,5 @@ app.use('/api/notes',require('./routers/notes'));
 
 
 app.listen(PORT, () => {
-    console.log(`inoteBook listening at http://localhost:${PORT}`);
+    console.log(`Todolist listening at http://localhost:${PORT}`);
 })

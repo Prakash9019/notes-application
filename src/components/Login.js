@@ -1,11 +1,12 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = (props) => {
     const [credentials, setCredentials] = useState({email: "", password: ""}) 
     let navigate = useNavigate();
-
+   
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -16,9 +17,10 @@ const Login = (props) => {
             body: JSON.stringify({email: credentials.email, password: credentials.password})
         });
         const json = await response.json()
-        console.log(json);
-        console.log(json.sucess);
+     //   console.log(json);
+      //  console.log(json.sucess);
         if (json.sucess){
+            toast("Login Successfully");
             // Save the auth token and redirect
             localStorage.setItem('jwtData', json.jwtData); 
             console.log(json.jwtData);
@@ -26,7 +28,9 @@ const Login = (props) => {
 
         }
         else{
-            alert("Invalid credentials");
+           // console.log(response);
+            toast(json.errors[0].msg);
+            
         }
     }
 
@@ -48,7 +52,7 @@ const Login = (props) => {
                     <input type="password" className="form-control" value={credentials.password} onChange={onChange} name="password" id="password" />
                 </div>
 
-                <button type="submit" className="btn btn-primary">Submit</button>
+                <button type="submit" className="btn btn-primary" >Submit</button>
             </form>
         </div>
     )

@@ -3,6 +3,7 @@ import noteContext from "../NoteContext"
 import Noteitem from './Noteitem';
 import AddNote from './AddNote';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Notes = () => {
     const context = useContext(noteContext);
@@ -31,6 +32,7 @@ const Notes = () => {
     const handleClick = (e)=>{ 
         editNote( note.id,note.etitle, note.edescription)
         refClose.current.click();
+        toast("Editted the note Sucessfully");
     }
       
     const onChange = (e)=>{

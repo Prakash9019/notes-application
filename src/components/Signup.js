@@ -1,11 +1,15 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
 
   const [credentials, setCredentials] = useState({username:"" ,email: "", password: "",cpassword:""}) 
   let navigate = useNavigate();
+   const diffToast = ()=>{
+      toast("Registered Successfully");
+   }
   const handleSubmit = async (e) => {
       e.preventDefault();
       const {username,email,password} = credentials;
@@ -53,7 +57,7 @@ const Signup = () => {
     <input type="checkbox" className="form-check-input" onChange={onChange} id="check me out" />
     <label className="form-check-label" htmlFor="check me out">Check me out</label>
   </div>
-  <button type="submit" className="btn btn-primary">Submit</button>
+  <button type="submit" className="btn btn-primary" onClick={diffToast}>Submit</button>
 </form>
     </div>
   )
