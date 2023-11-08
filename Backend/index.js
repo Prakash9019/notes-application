@@ -6,12 +6,18 @@ var cors=require('cors');
 const app = express();
 const PORT=5000;
 connectDB();
-app.use(cors());
+app.use(cors(
+    {
+        origin:["https://notes-application-theta.vercel.app"],
+        methods:["POST","GET"],
+        credentials:true
+    }
+));
 app.use(express.json());
 
 
-app.use('https://notes-application-a7e9hd5dg-surya-prakashs-projects-7fb03da7.vercel.app/api/auth',require('./routers/auth.js'));
-app.use('https://notes-application-a7e9hd5dg-surya-prakashs-projects-7fb03da7.vercel.app/api/notes',require('./routers/notes'));
+app.use('https://notes-application-theta.vercel.app/api/auth',require('./routers/auth.js'));
+app.use('https://notes-application-theta.vercel.app/api/notes',require('./routers/notes'));
 
 
 

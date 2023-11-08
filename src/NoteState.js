@@ -5,13 +5,13 @@ import  NoteContext from "./NoteContext";
 
 const NoteState=(props)=>{
 
-  const host = "https://notes-application-a7e9hd5dg-surya-prakashs-projects-7fb03da7.vercel.app";
+  const host = "https://notes-application-theta.vercel.app";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial) ;
 
       const getNotes = async () => {
         // API Call 
-        const response = await fetch(`https://notes-application-a7e9hd5dg-surya-prakashs-projects-7fb03da7.vercel.app/api/notes/fetchall`, {
+        const response = await fetch(`${host}/api/notes/fetchall`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
