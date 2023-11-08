@@ -5,7 +5,7 @@ import  NoteContext from "./NoteContext";
 
 const NoteState=(props)=>{
 
-  const host = "https://notes-application-theta.vercel.app";
+  const host = "https://notes-application-api-pi.vercel.app";
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial) ;
 
