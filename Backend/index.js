@@ -16,8 +16,8 @@ app.use(cors(
 app.use(express.json());
 
 
-app.use('https://notes-application-theta.vercel.app/api/auth',require('./routers/auth.js'));
-app.use('https://notes-application-theta.vercel.app/api/notes',require('./routers/notes'));
+app.use('/api/auth',require('./routers/auth.js'));
+app.use('/api/notes',require('./routers/notes'));
 
 
 
