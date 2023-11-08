@@ -8,7 +8,7 @@ const PORT=5000;
 connectDB();
 app.use(cors(
     {
-        origin:["https://notes-application-theta.vercel.app"],
+        origin:["https://notes-application-front-htzqbfgbg.vercel.app"],
         methods:["POST","GET"],
         credentials:true
     }
