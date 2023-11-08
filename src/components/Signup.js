@@ -13,7 +13,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
       e.preventDefault();
       const {username,email,password} = credentials;
-      const response = await fetch("http://localhost:5000/api/auth/user", {
+      const response = await fetch("https://notes-application-theta.vercel.app/api/auth/user", {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
