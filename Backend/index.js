@@ -10,8 +10,8 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use('https://notes-application-3d3y5izmf-surya-prakashs-projects-7fb03da7.vercel.app/api/auth',require('./routers/auth.js'));
-app.use('https://notes-application-3d3y5izmf-surya-prakashs-projects-7fb03da7.vercel.app/api/notes',require('./routers/notes'));
+app.use('https://notes-application-theta.vercel.app/api/auth',require('./routers/auth.js'));
+app.use('https://notes-application-theta.vercel.app/api/notes',require('./routers/notes'));
 
 
 
