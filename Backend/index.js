@@ -19,8 +19,8 @@ app.use(express.json());
 app.use('/api/auth',require('./routers/auth.js'));
 app.use('/api/notes',require('./routers/notes'));
 
-app.use('/',()=>{
-    console.log("helllo");
+app.get('/',(req,res)=>{
+    res.json("hello");
 })
 
 
