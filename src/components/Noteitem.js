@@ -18,8 +18,8 @@ const Noteitem = (props) => {
                         <i className="far fa-trash-alt mx-2" onClick={()=>{deleteNote(note._id)}}></i>
                    { check && <i className="far fa-edit mx-2" onClick={()=>{updateNote(note)}} ></i>}
                        
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value={check} id="flexCheckDefault" onClick={handleclick}/>
+                        <div className="form-check">
+                        <input className="form-check-input" type="checkbox" value={check} id="flexCheckDefault" onClick={handleclick}/>
                         </div>
                     </div>
                     <p className="card-text">{note.description}</p>
