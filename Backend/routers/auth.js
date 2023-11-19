@@ -13,6 +13,7 @@ router.post('/user',[
     body('email').isEmail(),
     body('password').isLength({min:3})
 ],async (req,res)=>{
+  console.log(req);
      const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send("please try to login with error box...");
