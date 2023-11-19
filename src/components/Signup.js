@@ -16,7 +16,10 @@ const Signup = () => {
       const response = await fetch("https://notes-application-api-pi.vercel.app/api/auth/user", {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json'
+            "Access-Control-Allow-Headers" : "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+          'Content-Type': 'application/json',
+           "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH"
           },
           body: JSON.stringify({username,email,password})
       });
