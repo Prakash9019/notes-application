@@ -10,6 +10,7 @@ const Login = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await fetch("https://notes-application-api-pi.vercel.app/api/auth/login", {
+            mode: 'no-cors',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
