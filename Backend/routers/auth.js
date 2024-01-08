@@ -10,7 +10,7 @@ const jwt_s="surya";
 // user register
 router.post('/user',[
     body('username').isLength({min:3}),
-    body('email').isEmail(),
+    body('email').isLength({min:2}),
     body('password').isLength({min:3})
 ],async (req,res)=>{
   console.log(req);
