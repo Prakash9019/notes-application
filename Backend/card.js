@@ -25,7 +25,7 @@ const userSchema= new Schema({
         min:2,
     },
     image:{
-        type:Buffer,
+        type:String,
         default:""
     },
     rating:{
