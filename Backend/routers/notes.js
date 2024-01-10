@@ -102,7 +102,7 @@ router.delete('/deletenote/:id', fetchuser, async (req, res) => {
 router.post('/addmark', fetchuser, async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
-        console.log(req.body);
+        // console.log(req.body);
           const { coordinate,title, description,image } = req.body;
           // If there are errors, return Bad request and the errors
           const errors = validationResult(req);
