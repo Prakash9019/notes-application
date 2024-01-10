@@ -99,11 +99,10 @@ router.delete('/deletenote/:id', fetchuser, async (req, res) => {
 
 //markers notes
 
-router.post('/addmark', fetchuser, [
-  body('title', 'Enter a valid title').isLength({ min: 3 }),
-  body('description', 'Description must be atleast 5 characters').isLength({ min: 3 }),], async (req, res) => {
+router.post('/addmark', fetchuser, async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
+        console.log(req.body);
           const { coordinate,title, description,image } = req.body;
           // If there are errors, return Bad request and the errors
           const errors = validationResult(req);
