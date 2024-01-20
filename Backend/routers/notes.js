@@ -103,7 +103,7 @@ router.post('/addmark', fetchuser, async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
         // console.log(req.body);
-          const { coordinate,title, description,image } = req.body;
+          const { coordinate,title, description,typeofproblem,image } = req.body;
           // If there are errors, return Bad request and the errors
           const errors = validationResult(req);
           if (!errors.isEmpty()) {
@@ -112,7 +112,7 @@ router.post('/addmark', fetchuser, async (req, res) => {
           //created a new note with "new" keyword
           //new note object  contain title...
           const note = new Card({
-            coordinate,title, description,image, user: req.user.id
+            coordinate,title, description,typeofproblem,image, user: req.user.id
           })
           //saving the notes 
           const savedNote = await note.save()

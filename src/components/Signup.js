@@ -23,11 +23,16 @@ const Signup = () => {
           },
           body: JSON.stringify({username,email,password})
       });
+      console.log(response);
+     // console.log("hello");
+      // console.log("hello"+response.jwtData);
+      // console.log(response);
+      console.log(response.jwtData);
       const json = await response.json()
-      console.log(json);
+    //  console.log(json);
           // Save the auth token and redirect
           localStorage.setItem('jwtData', json.jwtData); 
-          console.log(json.jwtData);
+          
           navigate("/");
   }
 

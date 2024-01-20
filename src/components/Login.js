@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios';
 import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,20 +10,26 @@ const Login = (props) => {
    
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch("https://notes-application-api-pi.vercel.app/api/auth/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({email: credentials.email, password: credentials.password})
-        });
-        const json = await response.json();
-     //   console.log(json);
+        try {
+            const response = await axios.post('https://notes-application-api-pi.vercel.app/api/auth/login', {
+              email: credentials.email,
+              password: credentials.password,
+            });
+      
+            const json = response.data;
+            console.log(json);
+      
+            // Save the token to localStorage
+            localStorage.setItem('jwtData', json.jwtData);
+      
+            // Navigate to the next screen or perform other actions
+            console.log('Token saved:', json.jwtData);
+          
       //  console.log(json.sucess);
         if (json.sucess){
             toast("Login Successfully");
             // Save the auth token and redirect
-            localStorage.setItem('jwtData', json.jwtData); 
+            // localStorage.setItem('jwtData', json.jwtData); 
             console.log(json.jwtData);
             navigate("/");
 
@@ -32,6 +39,11 @@ const Login = (props) => {
             toast(json.errors[0].msg);
             
         }
+    }
+        catch (error) {
+            console.error('Error during login:', error.message);
+            // Handle login failure, show an alert, etc.
+          }
     }
 
     const onChange = (e)=>{

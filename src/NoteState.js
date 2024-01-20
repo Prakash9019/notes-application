@@ -6,12 +6,20 @@ import  NoteContext from "./NoteContext";
 const NoteState=(props)=>{
 
   const host = "https://notes-application-api-pi.vercel.app";
+ 
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial) ;
 
       const getNotes = async () => {
         // API Call 
-        const response = await fetch(`${host}/api/notes/fetchall`, {
+        // const response = await fetch(`${host}/api/notes/fetchall`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     "jwtData": localStorage.getItem('jwtData')
+        //   }
+        // });
+        const response = await fetch('https://notes-application-api-pi.vercel.app/api/notes/fetchallmarkers',{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -19,6 +27,7 @@ const NoteState=(props)=>{
           }
         });
         const hello = await response.json();
+        console.log(response);
         setNotes(hello);
       }
 

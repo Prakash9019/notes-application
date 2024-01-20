@@ -24,6 +24,10 @@ const userSchema= new Schema({
         required:true,
         min:2,
     },
+    typeofproblem:{
+        type: String,
+        required: true, 
+    },
     image:{
         type:String,
         default:""
