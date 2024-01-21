@@ -125,6 +125,7 @@ router.post('/addmark', fetchuser, async (req, res) => {
           const note = new Card({
             coordinate,title, description,typeofproblem,image, createdAt: new Date(), user: req.user.id
           })
+          console.log(note);
           //saving the notes 
           const savedNote = await note.save()
           // return the notes as the response
