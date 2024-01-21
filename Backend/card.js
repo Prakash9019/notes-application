@@ -32,6 +32,10 @@ const userSchema= new Schema({
         type:String,
         default:""
     },
+    createdAt:{
+        type: Date,
+        default: Date.now
+    },
     rating:{
         type:Number,
         default:0
