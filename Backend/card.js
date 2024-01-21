@@ -34,7 +34,9 @@ const userSchema= new Schema({
     },
     createdAt:{
         type: Date,
-        default: Date.now
+        default: function() { 
+          return new Date(Date.now() + 1000*60*60*24*2);
+        }
     },
     rating:{
         type:Number,
