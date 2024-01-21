@@ -121,10 +121,10 @@ router.post('/addmark', fetchuser, async (req, res) => {
           }
           //created a new note with "new" keyword
           //new note object  contain title...
-          await Card.createIndex({ createdAt: 1 }, { expireAfterSeconds: ttlSeconds });
-          const createdAt=new Date();
+        //  await Card.createIndex({ createdAt: 1 }, { expireAfterSeconds: ttlSeconds });
+         // const createdAt=new Date();
           const note = new Card({
-            coordinate,title, description,typeofproblem,image, createdAt, user: req.user.id
+            coordinate,title, description,typeofproblem,image, user: req.user.id
           })
           console.log(note);
           //saving the notes 
