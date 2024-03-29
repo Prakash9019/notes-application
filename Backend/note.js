@@ -1,5 +1,6 @@
 const mongoose= require("mongoose");
 const {Schema}= mongoose;
+var moment = require('moment')
 
 const NotesSchema = new Schema({
     user:{
@@ -16,7 +17,15 @@ const NotesSchema = new Schema({
     },
     date:{
         type: Date,
-        default: Date.now
+        default: moment(new Date()).utc().format('DD/MM/YY')//new Date().format('DD/MM/YYYY'),
+    },
+    status:{
+        type: String,
+        default:"Incomplete",
+    },
+    priority:{
+        type: String,
+        default:"P0",
     },
   });
 

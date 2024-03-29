@@ -12,13 +12,20 @@ const { MongoClient } = require('mongodb');
 // Database and Collection names
 // const dbName = 'your-database';
 // const collectionName = 'your-collection';
-
+// findOne for specific user data to retrieve 
+// find will retrive all the data irrespective of the user
+// findById is used to retrive the sepcific document of user using its unique id
+// findByIdandUpdate is used to  find the specific doc and update it value with 2 params { $set: newNote }, { new: true } set data or add new data 
+//findByIdandDelete is used to delete the document of user using its unique id
 // TTL value in seconds (30 days)
 const ttlSeconds = 30 * 24 * 60 * 60;
 
 router.get('/fetchall', fetchuser,  async (req, res) => {
     try {
-      const notes = await Note.find({id : req.Uid});
+      const Uid=req.user.id;
+      const notes = await Note.find({user:Uid});
+      // console.log(Uid);
+      // console.log(id);
       res.json(notes);
     } catch (error) {
       console.error(error.message);
@@ -42,10 +49,11 @@ router.post('/addnote', fetchuser, [
           //created a new note with "new" keyword
           //new note object  contain title...
           const note = new Note({
-               title, description, user: req.user.id
+               title, description, status,priority ,user: req.user.id
           })
           //saving the notes 
-          const savedNote = await note.save()
+          const savedNote = await note.save();
+          console.log(note);
           // return the notes as the response
           res.json(savedNote);
 
@@ -70,7 +78,7 @@ router.put('/updatenote/:id', fetchuser, async (req, res) => {
       // Find the note to be updated and update it
       //getting the notes by findById method...
       let note = await Note.findById(req.params.id);
-      console.log(note._id);
+      // console.log(note._id);
       if (!note) { return res.status(404).send("Not Found") }
       //matching the existing user id with the login id9
     //  console.log(note.Uid + "   " +Uid);
@@ -126,7 +134,7 @@ router.post('/addmark', fetchuser, async (req, res) => {
           const note = new Card({
             coordinate,title, description,typeofproblem,image, user: req.user.id
           })
-          console.log(note);
+          // console.log(note);
           //saving the notes 
           const savedNote = await note.save()
           // return the notes as the response
@@ -141,7 +149,7 @@ router.post('/addmark', fetchuser, async (req, res) => {
 //fetch all marker data 
 router.get('/fetchallmarkers', fetchuser,  async (req, res) => {
   try {
-    console.log(req.user);
+    // console.log(req.user);
     const notes = await Card.find({id : req.user.id});
     res.json(notes);
   } catch (error) {

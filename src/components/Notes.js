@@ -22,8 +22,8 @@ const Notes = () => {
     const [note, setNote] = useState({id:" ", etitle: "", edescription: ""})
 
     const updateNote = (currentNote) => {
-        console.log(currentNote);
-        console.log("this note is updating");
+        // console.log(currentNote);
+        // console.log("this note is updating");
         ref.current.click();
        // setNote({title: note.title, description:note.description, tag: note.tag});
         setNote({ id:currentNote._id,etitle: currentNote.title, edescription: currentNote.description})
@@ -80,9 +80,9 @@ const Notes = () => {
                 <div className="container mx-2"> 
                 {notes.length===0 && 'No notes to display'}
                 </div>
-                {notes.map((note) => {
-                    return <Noteitem key={note._id} updateNote={updateNote} note={note} />
-                })}
+                {notes?.map((note,index) => (
+                     <Noteitem key={index} updateNote={updateNote} note={note} />
+                ))}
             </div>
         </>
     )

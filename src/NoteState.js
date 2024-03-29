@@ -5,7 +5,7 @@ import  NoteContext from "./NoteContext";
 
 const NoteState=(props)=>{
 
-  const host = "https://notes-application-api-pi.vercel.app";
+  const host = "http://localhost:5000";
  
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial) ;
@@ -19,7 +19,8 @@ const NoteState=(props)=>{
         //     "jwtData": localStorage.getItem('jwtData')
         //   }
         // });
-        const response = await fetch('https://notes-application-api-pi.vercel.app/api/notes/fetchallmarkers',{
+        // fetchallmarkers api is used for the aqualink only 
+        const response = await fetch('http://localhost:5000/api/notes/fetchall',{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -27,7 +28,7 @@ const NoteState=(props)=>{
           }
         });
         const hello = await response.json();
-        console.log(response);
+        // console.log(response);
         setNotes(hello);
       }
 
@@ -55,14 +56,14 @@ const NoteState=(props)=>{
           }
         });
         const json = response.json(); 
-        console.log(json);
+        // console.log(json);
         const newNotes = notes.filter((note) => { return note._id !== id })
         setNotes(newNotes);
       }
 
      // Edit a Note
   const editNote = async (id,title,description) => {
-   console.log(id);
+  //  console.log(id);
     // API Call 
     const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
       method: 'PUT',
@@ -73,7 +74,7 @@ const NoteState=(props)=>{
       body: JSON.stringify({title, description})
     });
     const json = await response.json(); 
-     console.log(json);
+    //  console.log(json);
      let newNotes = JSON.parse(JSON.stringify(notes))
     // Logic to edit in client
     for (let index = 0; index < newNotes.length; index++) {

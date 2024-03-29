@@ -10,17 +10,16 @@ const jwt_s="surya";
 // user register
 router.post('/user',[
     body('username').isLength({min:3}),
-    body('email').isLength({min:2}),
+    body('email').isLength({min:2}).isEmail(),
     body('password').isLength({min:3})
 ],async (req,res)=>{
-  console.log(req);
      const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send("please try to login with error box...");
     }
     try{
     //check the user email is vaildate or not 
-    let user=await User.findOne({email:req.body.email});
+    const user=await User.findOne({email:req.body.email});
     if(user){
       return res.status(400).send("please try to login user error...");
     }
@@ -62,13 +61,12 @@ router.post('/login',[
   }
   const {email,password}=req.body;
   try{
-  let user=await User.findOne({email});
+    console.log(email + password);
+  const user=await User.findOne({email});
   if(!user){
     return res.status(400).send("please try to login with correct credentials...");
   }
- 
-  const passwordComp=bcrypt.compare(password,user.password); //compare the given password with the found password in the database
-  //console.log(passwordComp);
+  const passwordComp= await bcrypt.compare(password,user.password); //compare the given password with the found password in the database
   if(!passwordComp){
     sucess=false;
     return res.status(400).send("please try to login with correct credentials");

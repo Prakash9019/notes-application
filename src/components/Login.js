@@ -11,13 +11,13 @@ const Login = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://notes-application-api-pi.vercel.app/api/auth/login', {
+            const response = await axios.post('http://localhost:5000/api/auth/login', {
               email: credentials.email,
               password: credentials.password,
             });
       
             const json = response.data;
-            console.log(json);
+            // console.log(json);
       
             // Save the token to localStorage
             localStorage.setItem('jwtData', json.jwtData);
@@ -30,7 +30,7 @@ const Login = (props) => {
             toast("Login Successfully");
             // Save the auth token and redirect
             // localStorage.setItem('jwtData', json.jwtData); 
-            console.log(json.jwtData);
+            // console.log(json.jwtData);
             navigate("/");
 
         }
