@@ -62,16 +62,17 @@ const NoteState=(props)=>{
       }
 
      // Edit a Note
-  const editNote = async (id,title,description,status,priority) => {
+  const editNote = async (id) => {
   //  console.log(id);
+  //  console.log(id._id);
     // API Call 
-    const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+    const response = await fetch(`${host}/api/notes/updatenote/${id._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         "jwtData": localStorage.getItem('jwtData')
       },
-      body: JSON.stringify({title, description,status,priority})
+      body: JSON.stringify({id})
     });
     const json = await response.json(); 
      console.log(json);
@@ -81,10 +82,10 @@ const NoteState=(props)=>{
 
       const element = newNotes[index];
       if (element._id === id) {
-        newNotes[index].title = title;
-        newNotes[index].description = description;
-        newNotes[index].status=status;
-        newNotes[index].priority=priority;
+        newNotes[index].title = id.title;
+        newNotes[index].description = id.description;
+        newNotes[index].status=id.status;
+        newNotes[index].priority=id.priority;
         break; 
       }
     }  

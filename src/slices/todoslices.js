@@ -1,124 +1,49 @@
-// import { createSlice } from '@reduxjs/toolkit';
-
-// const getInitialTodo = () => {
-//   // getting todo list
-//   const localTodoList = window.localStorage.getItem('todoList');
-//   // if todo list is not empty
-//   if (localTodoList) {
-//     return JSON.parse(localTodoList);
-//   }
-//   window.localStorage.setItem('todoList', []);
-//   return [];
-// };
-
-// const initialValue = {
-//   filterStatus: 'all',
-//   todoList: getInitialTodo(),
-// };
-
-// export const todoSlice = createSlice({
-//   name: 'todo',
-//   initialState: initialValue,
-//   reducers: {
-//     addTodo: (state, action) => {
-//       state.todoList.push(action.payload);
-//       const todoList = window.localStorage.getItem('todoList');
-//       if (todoList) {
-//         const todoListArr = JSON.parse(todoList);
-//         todoListArr.push({
-//           ...action.payload,
-//         });
-//         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));
-//       } else {
-//         window.localStorage.setItem(
-//           'todoList',
-//           JSON.stringify([
-//             {
-//               ...action.payload,
-//             },
-//           ])
-//         );
-//       }
-//     },
-//     updateTodo: (state, action) => {
-//       const todoList = window.localStorage.getItem('todoList');
-//       if (todoList) {
-//         const todoListArr = JSON.parse(todoList);
-//         todoListArr.forEach((todo) => {
-//           if (todo.id === action.payload.id) {
-//             todo.status = action.payload.status;
-//             todo.title = action.payload.title;
-//           }
-//         });
-//         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));
-//         state.todoList = [...todoListArr];
-//       }
-//     },
-//     deleteTodo: (state, action) => {
-//       const todoList = window.localStorage.getItem('todoList');
-//       if (todoList) {
-//         const todoListArr = JSON.parse(todoList);
-//         todoListArr.forEach((todo, index) => {
-//           if (todo.id === action.payload) {
-//             todoListArr.splice(index, 1);
-//           }
-//         });
-//         window.localStorage.setItem('todoList', JSON.stringify(todoListArr));
-//         state.todoList = todoListArr;
-//       }
-//     },
-//     updateFilterStatus: (state, action) => {
-//       state.filterStatus = action.payload;
-//     },
-//   },
-// });
-
-// export const { addTodo, updateTodo, deleteTodo, updateFilterStatus } =
-//   todoSlice.actions;
-// export default todoSlice.reducer;
-
-import {createSlice, nanoid } from '@reduxjs/toolkit';
-
-const initialState = {
-    todos: [{id: 1, text: "Hello world"}],
-    notes: [],
-}
+import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
 
 const host = "http://localhost:5000";
- 
 
-   const haveNotes  = async (notes) =>{
-     const response = await fetch('http://localhost:5000/api/notes/fetchall',{
+const fetchNotes = async () => {
+    const response = await fetch('http://localhost:5000/api/notes/fetchall', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          "jwtData": localStorage.getItem('jwtData')
+            'Content-Type': 'application/json',
+            "jwtData": localStorage.getItem('jwtData')
         }
-      });
-      const hello = await response.json();
-      // console.log(response);
-      notes.push(hello);
-    }
+    });
+    const data = await response.json();
+    return data;
+}
 
+export const getNotes = createAsyncThunk('todo/getNotes', async () => {
+    const notes = await fetchNotes();
+    return notes;
+});
 
 export const todoSlice = createSlice({
     name: 'todo',
-    initialState,
+    initialState: {
+        todos: [{ id: 1, text: "Hello world" }],
+        notes: [],
+    },
     reducers: {
         addTodo: (state, action) => {
             const todo = {
-                id: nanoid(), 
+                id: nanoid(),
                 text: action.payload
             }
             state.todos.push(todo)
         },
         removeTodo: (state, action) => {
-            state.todos = state.todos.filter((todo) => todo.id !== action.payload )
+            state.todos = state.todos.filter((todo) => todo.id !== action.payload)
         },
-        getNotes: haveNotes(),
+    },
+    extraReducers: (builder) => {
+        builder.addCase(getNotes.fulfilled, (state, action) => {
+            state.notes.push(...action.payload);
+        });
     }
-})
+});
 
-export const {addTodo, removeTodo} = todoSlice.actions
+export const { addTodo, removeTodo } = todoSlice.actions;
 
-export default todoSlice.reducer
+export default todoSlice.reducer;

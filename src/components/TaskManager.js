@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,useState } from 'react'
+import React, { useContext, useEffect,useState,useRef } from 'react'
 import noteContext from "../NoteContext"
 import { useDispatch,useSelector } from 'react-redux';
 import {getNotes} from "../slices/todoslices";
@@ -6,6 +6,7 @@ import {getNotes} from "../slices/todoslices";
 import DatePicker from 'react-datepicker'; // Import the date picker component
 import 'react-datepicker/dist/react-datepicker.css'; // Import the date picker CSS
 import { Card, Input } from 'semantic-ui-react';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 import TaskCard from './TaskCard';
@@ -14,24 +15,51 @@ import TaskCard from './TaskCard';
 const TaskManager = () => {
   const context = useContext(noteContext);
     let navigate=useNavigate();
-    const { notes, getNotes } = context;
+    const { editNote } = context;
     const dispatch=useDispatch();
     const notesData=useSelector(state=>state.notes);
     useEffect(() => {
       if(localStorage.getItem('jwtData')){
-          // dispatch(getNotes());
-          getNotes();
+          dispatch(getNotes());
+          // getNotes();
       }
       else{
              navigate("/login");
       }
-    })
+    },[])
+
+    const ref = useRef(null)
+    const refClose = useRef(null)
+    const [note1, setNote1] = useState({id:" ", title: "", edescription: "",estatus: "",epriority: ""})
+     
+    const updateNote = (currentNote) => {
+        // console.log(currentNote);
+        // console.log("this note is updating");
+        ref.current.click();
+       // setNote({title: note.title, description:note.description, tag: note.tag});
+        setNote1({ id:currentNote._id,title: currentNote.title, edescription: currentNote.description,estatus:currentNote.status,epriority:currentNote.priority});
+        console.log(note1.title);
+        // console.log(setNote1);
+        
+    }
+
+    const handleClick = (e)=>{ 
+        editNote( note1.id,note1.title, note1.edescription,note1.estatus,note1.epriority);
+        refClose.current.click();
+        toast("Editted the note Sucessfully");
+    }
+      
+    const onChange = (e)=>{
+        setNote1({...note1, [e.target.name]: e.target.value})
+    }
+
     // {console.log(notes)}
     // const [notesData, setNotesData] = useState([]);
   const [searchInput, setSearchInput] = useState('');
   const [selectedPriority, setSelectedPriority] = useState(''); // Initialize with an empty string
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [sortPriority,setSortPriority] = useState(''); 
   // useEffect(() => {
   //   // Fetch notes data from your API (replace with your actual endpoint)
   //   axios.get('https://jsonplaceholder.typicode.com/posts')
@@ -46,77 +74,75 @@ const TaskManager = () => {
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
   };
+  const handleSortPriorityChange = (e) => {
+      setSortPriority(e.target.value);
 
+  }
   // Handle priority selection
   const handlePriorityChange = (e) => {
     setSelectedPriority(e.target.value);
     console.log(e.target.value);
-    console.log(filteredNotes);
   };
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    console.log(date);
   };
 
-  const sortedNotes = [...notes].sort((a, b) => a.priority.localeCompare(b.priority));
+  const sortedNotes = [...notesData].sort((a, b) => a.priority.localeCompare(b.priority));
   const handleEndDateChange = (date) => {
     setEndDate(date);
-    console.log(date);
   };
-  const filteredNotes = notes.filter((note) => {
+  const filteredNotes = notesData.filter((note) => {
     const titleMatches = note.title.toLowerCase().includes(searchInput.toLowerCase());
     const priorityMatches = !selectedPriority || note.priority.toLowerCase() === selectedPriority.toLowerCase();
+    // const sortedNotes = !setSortPriority;
     const date1 = new Date(note.date);
     const date2 = new Date(startDate);
     const date3=new Date(endDate);
     const dateInRange = (!startDate || date1 >= date2 ) && (!endDate || date1 <= date3);
-//     
-
-// const date2String = "2024-03-29T10:05:38.608Z";
-// 
-
-// if (date1 > date2) {
-//   console.log("The first date is greater than the second date.");
-//   console.log(date1 + " "+date2);
-// } else if (date1 < date2) {
-//   console.log("The first date is less than the second date.");
-// } else {
-//   console.log("Both dates are the same.");
-// }
-    return titleMatches && priorityMatches && dateInRange;
+    return titleMatches && priorityMatches && dateInRange ;
   });
-  // console.log(filteredNotes);
+
+ 
   
     return (
-    //   <div className="container mx-auto p-4">
-    //     <h1 className="text-2xl font-bold mb-6">Task Manager</h1>
-    //     <div className="grid grid-cols-3 gap-4">
-    //       {/* Completed Tasks */}
-    //       <div>
-    //         <h2 className="text-xl font-bold mb-4">Completed Tasks</h2>
-    //         {completedTasks.map((task) => (
-    //           <TaskCard key={task.id} task={task} />
-    //         ))}
-    //       </div>
-  
-    //       {/* Incomplete Tasks */}
-    //       <div>
-    //         <h2 className="text-xl font-bold mb-4">Incomplete Tasks</h2>
-    //         {incompleteTasks.map((task) => (
-    //           <TaskCard key={task.id} task={task} />
-    //         ))}
-    //       </div>
-  
-    //       {/* Deployed Tasks */}
-    //       <div>
-    //         <h2 className="text-xl font-bold mb-4">Deployed Tasks</h2>
-    //         {deployedTasks.map((task) => (
-    //           <TaskCard key={task.id} task={task} />
-    //         ))}
-    //       </div>
-    //     </div>
-    //   </div>
-    <div>
+    <div>  <button ref={ref} type="button" className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>
+       <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Edit Note</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <form className="my-3">
+                                <div className="mb-3">
+                                    <label htmlFor="title" className="form-label">Title</label>
+                                    <input type="text" className="form-control" id="title" name="title" value={note1.title} aria-describedby="emailHelp" onChange={onChange} minLength={5} required/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="description" className="form-label">Description</label>
+                                    <input type="text" className="form-control" id="edescription" name="edescription" value={note1.edescription} onChange={onChange} minLength={5} required/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="status" className="form-label">Status</label>
+                                    <input type="text" className="form-control" id="estatus" name="estatus" value={note1.estatus} onChange={onChange} minLength={5} required/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="priority" className="form-label">Priority</label>
+                                    <input type="text" className="form-control" id="epriority" name="epriority" value={note1.epriority} onChange={onChange} minLength={5} required/>
+                                </div>
+ 
+                            </form>
+                        </div>
+                        <div className="modal-footer">
+                            <button ref={refClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button disabled={note1.title.length<5 || note1.edescription.length<5} onClick={handleClick} type="button" className="btn btn-primary">Update Note</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
        <div style={{ padding: 20 ,display :'flex',flexDirection:'row' }}>
         <h3> Fliter By : </h3>
       <Input          icon="search"
@@ -159,19 +185,19 @@ const TaskManager = () => {
         <h3> Sorted By : </h3>
       
       <select
-        value={selectedPriority}
-        onChange={handlePriorityChange}
+        value={sortPriority}
+        onChange={handleSortPriorityChange}
         style={{ fontSize:20 }}
         className='mx-3 w-5'
       >
-        <option value="">Select priority</option>
+        <option value="hi">Select priority</option>
         <option value="p0">P0</option>
         <option value="p1">P1</option>
         <option value="p2">P2</option>
       </select>
     </div>
       {/* Add date range picker components here */}
-      <Card.Group itemsPerRow={3} style={{ marginTop: 20 }}>
+      {/* <Card.Group itemsPerRow={3} style={{ marginTop: 20 }}>
         {filteredNotes.map((note) => (
           <Card key={note.id}>
             <Card.Content>
@@ -180,7 +206,7 @@ const TaskManager = () => {
             </Card.Content>
           </Card>
         ))}
-      </Card.Group>
+      </Card.Group> */}
     
 
 
@@ -196,7 +222,7 @@ const TaskManager = () => {
              <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Pending</h3>
               </div>
       {   filteredNotes.length !==0 ? filteredNotes.filter((task) => (task.status).toLowerCase() === 'completed').map((task) => (
-  <TaskCard key={task.id} task={task} />
+  <TaskCard updateNote={updateNote}  key={task.id} task={task} />
 ))  : <h4 className='text-center my-2'>No Notes to display</h4> }
       </div>
       
@@ -207,7 +233,7 @@ const TaskManager = () => {
          <h3 className="text-lg grey font-semibold text-center bg-blue-900  mt-3 mb-0 p-4">In Progress</h3>
       </div>
       {   filteredNotes.length !==0 ? filteredNotes.filter((task) => (task.status).toLowerCase() === 'incomplete').map((task) => (
-  <TaskCard key={task.id} task={task} />
+  <TaskCard updateNote={updateNote}  key={task.id} task={task} />
 )) : <h4 className='text-center my-2'>No Notes to display</h4> }
       </div>
 
@@ -217,7 +243,7 @@ const TaskManager = () => {
       <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Completed</h3>
       </div>
       {   filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'deploy').map((task) => (
-  <TaskCard key={task.id} task={task} />
+  <TaskCard updateNote={updateNote}  key={task.id} task={task} />
 )) : <h4 className='text-center my-2'>No Notes to display</h4> }
       </div>
 
@@ -226,7 +252,7 @@ const TaskManager = () => {
         <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Deployed</h3>
         </div>
         {  filteredNotes.length !==0 ? filteredNotes.filter((task) => (task.status).toLowerCase() === 'deploy').map((task) => (
-  <TaskCard key={task.id} task={task} />
+  <TaskCard updateNote={updateNote}  key={task.id} task={task} />
 ))  : <h4 className='text-center my-2'>No Notes to display</h4> }
       </div>
       <div className="hii4">
@@ -234,7 +260,7 @@ const TaskManager = () => {
         <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Deffered</h3>
         </div>
         {   filteredNotes.length !==0 ? filteredNotes.filter((task) => (task.status).toLowerCase() === 'deploy').map((task) => (
-  <TaskCard key={task.id} task={task} />
+  <TaskCard updateNote={updateNote}  key={task.id} task={task} />
 ))  : <h4 className='text-center my-2'>No Notes to display</h4> }
       </div>
     </div>
