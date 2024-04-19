@@ -4,6 +4,7 @@ import Noteitem from './Noteitem';
 import AddNote from './AddNote';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import TaskManager from './TaskManager';
 
 const Notes = () => {
     const context = useContext(noteContext);
@@ -16,21 +17,21 @@ const Notes = () => {
         else{
                navigate("/login");
         }
-    })
+    },[])
     const ref = useRef(null)
     const refClose = useRef(null)
-    const [note, setNote] = useState({id:" ", etitle: "", edescription: ""})
+    const [note, setNote] = useState({id:" ", etitle: "", edescription: "",estatus: "",epriority: "",})
 
     const updateNote = (currentNote) => {
         // console.log(currentNote);
         // console.log("this note is updating");
         ref.current.click();
        // setNote({title: note.title, description:note.description, tag: note.tag});
-        setNote({ id:currentNote._id,etitle: currentNote.title, edescription: currentNote.description})
+        setNote({ id:currentNote._id,etitle: currentNote.title, edescription: currentNote.description,estatus:currentNote.status,epriority:currentNote.priority})
     }
 
     const handleClick = (e)=>{ 
-        editNote( note.id,note.etitle, note.edescription)
+        editNote( note.id,note.etitle, note.edescription,note.estatus,note.epriority);
         refClose.current.click();
         toast("Editted the note Sucessfully");
     }
@@ -64,6 +65,14 @@ const Notes = () => {
                                     <label htmlFor="description" className="form-label">Description</label>
                                     <input type="text" className="form-control" id="edescription" name="edescription" value={note.edescription} onChange={onChange} minLength={5} required/>
                                 </div>
+                                <div className="mb-3">
+                                    <label htmlFor="status" className="form-label">Status</label>
+                                    <input type="text" className="form-control" id="estatus" name="estatus" value={note.estatus} onChange={onChange} minLength={5} required/>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="priority" className="form-label">Priority</label>
+                                    <input type="text" className="form-control" id="epriority" name="epriority" value={note.epriority} onChange={onChange} minLength={5} required/>
+                                </div>
  
                             </form>
                         </div>
@@ -75,7 +84,7 @@ const Notes = () => {
                 </div>
             </div>
 
-            <div className="row my-3">
+            <div className="container my-3 ml-3  bg-black ">
                 <h2>You Notes</h2>
                 <div className="container mx-2"> 
                 {notes.length===0 && 'No notes to display'}
@@ -84,6 +93,7 @@ const Notes = () => {
                      <Noteitem key={index} updateNote={updateNote} note={note} />
                 ))}
             </div>
+            <TaskManager/>
         </>
     )
 }

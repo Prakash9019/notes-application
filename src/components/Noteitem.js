@@ -9,7 +9,7 @@ const Noteitem = (props) => {
          setcheck(!check);
     }
     return (
-      
+        
         <div className="col-md-3">
             <div className="card my-3">
                 <div className="card-body">
@@ -23,6 +23,8 @@ const Noteitem = (props) => {
                         </div>
                     </div>
                     <p className="card-text">{note.description}</p>
+                    <p className="card-text">{note.status}</p>
+                    <p className="card-text">{note.priority}</p>
 
                 </div>
             </div>

@@ -39,8 +39,9 @@ router.post('/addnote', fetchuser, [
   body('description', 'Description must be atleast 5 characters').isLength({ min: 5 }),], async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
-          const { title, description} = req.body;
-
+        console.log(req.body);
+          const { title, description,status,priority} = req.body;
+           console.log(status);
           // If there are errors, return Bad request and the errors
           const errors = validationResult(req);
           if (!errors.isEmpty()) {
@@ -53,6 +54,7 @@ router.post('/addnote', fetchuser, [
           })
           //saving the notes 
           const savedNote = await note.save();
+          console.log("hello world");
           console.log(note);
           // return the notes as the response
           res.json(savedNote);
@@ -68,13 +70,15 @@ router.put('/updatenote/:id', fetchuser, async (req, res) => {
   //The PUT method is used to modify a single resource. The POST method is used to add a child resource
   // same PUT request multiple times will always produce the same result 
 
-  const {title, description } = req.body;
+  const {title, description,status,priority } = req.body;
   try {
       // Create a newNote object
       const newNote = {};
      
       if (title) { newNote.title = title };
       if (description) { newNote.description = description };
+      if (status) { newNote.status = status };
+      if (priority) { newNote.priority = priority };
       // Find the note to be updated and update it
       //getting the notes by findById method...
       let note = await Note.findById(req.params.id);

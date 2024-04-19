@@ -32,7 +32,7 @@ const NoteState=(props)=>{
         setNotes(hello);
       }
 
-      const addNote = async (title,description) => {
+      const addNote = async (title,description,status,priority) => {
         // API Call 
         const response = await fetch(`${host}/api/notes/addnote`, {
           method: 'POST',
@@ -40,7 +40,7 @@ const NoteState=(props)=>{
             'Content-Type': 'application/json',
             "jwtData": localStorage.getItem('jwtData')
           },
-           body: JSON.stringify({title,description})
+           body: JSON.stringify({title,description,status,priority})
         });
         const note = await response.json() 
         setNotes(notes.concat(note));
@@ -56,13 +56,13 @@ const NoteState=(props)=>{
           }
         });
         const json = response.json(); 
-        // console.log(json);
+        console.log(json);
         const newNotes = notes.filter((note) => { return note._id !== id })
         setNotes(newNotes);
       }
 
      // Edit a Note
-  const editNote = async (id,title,description) => {
+  const editNote = async (id,title,description,status,priority) => {
   //  console.log(id);
     // API Call 
     const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
@@ -71,10 +71,10 @@ const NoteState=(props)=>{
         'Content-Type': 'application/json',
         "jwtData": localStorage.getItem('jwtData')
       },
-      body: JSON.stringify({title, description})
+      body: JSON.stringify({title, description,status,priority})
     });
     const json = await response.json(); 
-    //  console.log(json);
+     console.log(json);
      let newNotes = JSON.parse(JSON.stringify(notes))
     // Logic to edit in client
     for (let index = 0; index < newNotes.length; index++) {
@@ -83,6 +83,8 @@ const NoteState=(props)=>{
       if (element._id === id) {
         newNotes[index].title = title;
         newNotes[index].description = description;
+        newNotes[index].status=status;
+        newNotes[index].priority=priority;
         break; 
       }
     }  
