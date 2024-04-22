@@ -5,7 +5,7 @@ import  NoteContext from "./NoteContext";
 
 const NoteState=(props)=>{
 
-  const host = "http://localhost:5000";
+  const host = "https://notes-application-api-pi.vercel.app";
  
   const notesInitial = [];
   const [notes, setNotes] = useState(notesInitial) ;
@@ -20,7 +20,7 @@ const NoteState=(props)=>{
         //   }
         // });
         // fetchallmarkers api is used for the aqualink only 
-        const response = await fetch('http://localhost:5000/api/notes/fetchall',{
+        const response = await fetch('https://notes-application-api-pi.vercel.app/api/notes/fetchall',{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

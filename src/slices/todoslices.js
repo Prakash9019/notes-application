@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
 const host = "http://localhost:5000";
 
 const fetchNotes = async () => {
-    const response = await fetch('http://localhost:5000/api/notes/fetchall', {
+    const response = await fetch('https://notes-application-api-pi.vercel.app/api/notes/fetchall', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
