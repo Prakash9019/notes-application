@@ -227,9 +227,9 @@ const TaskManager = () => {
       </div>
       
 
-      {/* Incomplete Tasks */}
+      {/* Incomplete Tasks  style={{backgroundColor: '#90D26D'}}   */}
       <div className="hii1">
-      <div  style={{backgroundColor: '#90D26D'}}>
+      <div  >
          <h3 className="text-lg grey font-semibold text-center bg-blue-900  mt-3 mb-0 p-4">In Progress</h3>
       </div>
       {   filteredNotes.length !==0 ? filteredNotes.filter((task) => (task.status).toLowerCase() === 'incomplete').map((task) => (
