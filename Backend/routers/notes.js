@@ -73,6 +73,7 @@ router.put('/updatenote/:id', fetchuser, async (req, res) => {
   const {title, description,status,priority } = req.body;
   try {
       // Create a newNote object
+      console.log("bcakend....")
       console.log(req.body);
       const newNote = {};
      

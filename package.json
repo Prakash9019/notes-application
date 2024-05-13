@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "express-validator": "^6.15.0",
     "mongodb": "^5.1.0",
+    "qrcode": "^1.5.3",
     "react": "^18.2.0",
     "react-datepicker": "^6.6.0",
     "react-dom": "^18.2.0",

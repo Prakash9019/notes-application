@@ -5,10 +5,10 @@ import noteContext from "../NoteContext"
 const TaskCard = (props) => {
   const context = useContext(noteContext);
     // let navigate=useNavigate();
-    const { task, updateNote } = props;
+    const { task, updateNote ,setactive} = props;
     const {  deleteNote, } = context;
   return (
-    <div className="hello mt-2 mb-2 p-4 rounded shadow"> 
+    <div className="hello mt-2 mb-2 p-4 rounded shadow " draggable onDragStart={()=> setactive(JSON.stringify(task))} onDragEnd={()=> setactive(null)}> 
     <div className="flex flex-row">
   <h3 className="text-lg text-gray-600 font-semibold">{task.title}</h3>
   <i className="far fa-trash-alt mx-2 cursor-pointer" onClick={() => deleteNote(task._id)}></i>

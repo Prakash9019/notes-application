@@ -62,30 +62,32 @@ const NoteState=(props)=>{
       }
 
      // Edit a Note
-  const editNote = async (id) => {
+  const editNote = async (id,title,description,status,priority) => {
+ 
   //  console.log(id);
   //  console.log(id._id);
     // API Call 
-    const response = await fetch(`${host}/api/notes/updatenote/${id._id}`, {
+    const response = await fetch(`http://localhost:5000/api/notes/updatenote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         "jwtData": localStorage.getItem('jwtData')
       },
-      body: JSON.stringify({id})
+      body: JSON.stringify({id,title,description,status,priority})
     });
     const json = await response.json(); 
-     console.log(json);
-     let newNotes = JSON.parse(JSON.stringify(notes))
+     
+     let newNotes = JSON.parse(JSON.stringify(json))
     // Logic to edit in client
     for (let index = 0; index < newNotes.length; index++) {
 
       const element = newNotes[index];
+      console.log("hiiii"+element);
       if (element._id === id) {
-        newNotes[index].title = id.title;
-        newNotes[index].description = id.description;
-        newNotes[index].status=id.status;
-        newNotes[index].priority=id.priority;
+        newNotes[index].title = title;
+        newNotes[index].description = description;
+        newNotes[index].status=status;
+        newNotes[index].priority=priority;
         break; 
       }
     }  
