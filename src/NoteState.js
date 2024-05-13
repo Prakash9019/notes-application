@@ -67,7 +67,7 @@ const NoteState=(props)=>{
   //  console.log(id);
   //  console.log(id._id);
     // API Call 
-    const response = await fetch(`http://localhost:5000/api/notes/updatenote/${id}`, {
+    const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
