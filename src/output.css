@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 .App {
   text-align: center;
@@ -13,57 +17,65 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+
 .hi{
   width: 200px;
   height: 23px;
 }
+
 .hii1{
-  /* width: 18%; */
+  width: 18%;
   /* margin:12; */
   margin-left: 1rem;
   margin-top: 103;
   margin-bottom: 103;
   /* background-color: grey; */
 }
-.hii2{
-  /* width: 18%; */
-  margin-left: 1rem;
 
+.hii2{
+  width: 18%;
+  margin-left: 1rem;
   margin-bottom: 103;
   /* background-color: greenyellow; */
 }
+
 .hii3{
-  /* width: 18%; */
+  width: 18%;
   /* margin:12; */
   margin-top: 103;
   margin-left: 1rem;
   margin-bottom: 103;
   /* background-color: blue; */
 }
+
 .hii4{
-  /* width: 18%; */
+  width: 18%;
   /* margin:12; */
   margin-left: 1rem;
   margin-top: 103;
   margin-bottom: 103;
   /* background-color: aqua; */
 }
+
 .hii5{
-  /* width: 18%; */
+  width: 18%;
   /* margin:12; */
   margin-top: 103;
   margin-bottom: 103;
   margin-left: 1rem;
   /* background-color: aqua; */
 }
+
 .hello{
   background-color: rgb(190, 184, 184);
   cursor:grab;
 }
+
 .hello:active{
   opacity: 0.7;
   border: 1px solid #111;
 }
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -83,6 +95,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

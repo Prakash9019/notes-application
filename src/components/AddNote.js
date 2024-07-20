@@ -46,7 +46,7 @@ const AddNote = () => {
                     <label htmlFor="status" className="form-label">status</label>
                     <input type="text" className="form-control" id="status" name="status" value={note.status} onChange={onChange} minLength={5} required />
                 </div>
-                <div className="max-w-sm mx-auto">
+                <div className="mb-3">
                 <label htmlFor="description" className="form-label">Priority</label>
                <br/>
                {/* <select id="priority" className="my-1 w-50 h-40 text-lg" value={note.priority}>

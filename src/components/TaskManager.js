@@ -138,21 +138,22 @@ const TaskManager = () => {
                     </div>
                 </div>
             </div>
-       <div style={{ padding: 20 ,display :'flex',flexDirection:'row' }}>
-        <h3> Fliter By : </h3>
-      <Input          icon="search"
+            {/* style={{ padding: 20 ,display :'flex',flexDirection:'row' }} */}
+            <h3 className=' p-4 '> Fliter By : </h3>
+       <div className='p-4 grid grid-cols-4  gap-4 md:grid-cols-4 sm:grid-cols-2 md:gap-3 '>
+      
+      <input          icon="search"
         placeholder="Search by title..."
         value={searchInput}
         onChange={handleSearchChange} 
-        className='mx-3'
-        style={{ fontSize:20}}
+        className='mx-2 border-solid border-2 border-black-800 p-2 text-center sm:w-full'
       />
       <select
         value={selectedPriority}
         onChange={handlePriorityChange}
-        style={{ fontSize:20 }}
-        className='mx-3 w-4'
+        className='border-solid border-2 border-black-800 text-center'
       >
+        {/* md:w-1/2 sm:w-full border-solid border-2 border-black-800' */}
         <option value="">Select priority</option>
         <option value="p0">P0</option>
         <option value="p1">P1</option>
@@ -164,26 +165,28 @@ const TaskManager = () => {
         selected={startDate}
         onChange={handleStartDateChange}
         placeholderText="Select start date"
-        // style={{}}
-        className='mx-3'
+        // style={{}} border-solid border-2 border-black-800 md:w-1/2 sm:w-full
+        className=' border-solid border-2 border-black-800 p-2.5 w-full text-center'
       />
       <DatePicker
       key={2}
         selected={endDate}
         onChange={handleEndDateChange}
-        // style={{ }}
-        className='mx-3'
+       
+        className='border-solid border-2 border-black-800 p-2.5 text-center w-full'
         placeholderText="Select end date"
       />
 </div>
-<div style={{ padding: 20 ,display :'flex',flexDirection:'row' }}>
-        <h3> Sorted By : </h3>
+
+
+
+<div className='flex flex-row p-4'>
+        <h3 className='p-4'> Sorted By : </h3>
       
       <select
         value={sortPriority}
         onChange={handleSortPriorityChange}
-        style={{ fontSize:20 }}
-        className='mx-3 w-5'
+        className='border-solid border-2 border-black-800 '
       >
         <option value="hi">Select priority</option>
         <option value="p0">P0</option>
@@ -194,12 +197,12 @@ const TaskManager = () => {
 
     <div className="  my-3 mx-6  p-4">
     <h1 className="text-2xl font-bold mb-6 ml-3">Task Manager</h1>
-    <div className="flex  flex-row  row bg-red-400 " index={12} >
+    <div className="grid md:grid-cols-3 lg:grid-cols-3 gap-2" index={12} >
       {/* Completed Tasks  space-x-4 */}
 
-      <div className="hii5" key={1}>
-             <div  style={{backgroundColor: '#4793AF'}}>
-             <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Pending</h3>
+      <div className="hii5 md:w-full sm:w-full " key={1}>
+             <div className='md:w-full sm:w-full' style={{backgroundColor: '#4793AF',}}>
+             <h3 className="text-lg grey font-semibold text-center  mt-3 mb-0 p-4 ">Pending</h3>
               </div>
               {  filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'pending')
       .length!==0 ?
@@ -215,8 +218,8 @@ const TaskManager = () => {
       
 
       <div className="hii1" key={2}>
-      <div  >
-         <h3 className="text-lg grey font-semibold text-center bg-blue-900  mt-3 mb-0 p-4">In Progress</h3>
+      <div  style={{backgroundColor: 'grey',}}>
+         <h3 className="text-lg grey font-semibold text-center   mt-3 mb-0 p-4">In Progress</h3>
       </div>
       {  filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'incomplete')
       .length!==0 ?
@@ -233,7 +236,7 @@ const TaskManager = () => {
       {/* Deployed Tasks */}
       <div className="hii2 " key={3}>
       <div  style={{backgroundColor: '#7EA1FF'}}>
-      <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Completed</h3>
+      <h3 className="text-lg grey font-semibold text-center  mt-3 mb-0 p-4">Completed</h3>
       </div>
       {  filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'completed')
       .length!==0 ?
@@ -249,7 +252,7 @@ const TaskManager = () => {
 
       <div className="hii3" key={4}>
       <div  style={{backgroundColor: '#ECCA9C'}}>
-        <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Deployed</h3>
+        <h3 className="text-lg grey font-semibold text-center  mt-3 mb-0 p-4">Deployed</h3>
         </div>
         {  filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'deployed')
       .length!==0 ?
@@ -266,7 +269,7 @@ const TaskManager = () => {
 
       <div className="hii4" key={5}>
       <div  style={{backgroundColor: '#BC7FCD'}}>
-        <h3 className="text-lg grey font-semibold text-center bg-blue-900 mt-3 mb-0 p-4">Deffered</h3>
+        <h3 className="text-lg grey font-semibold text-center  mt-3 mb-0 p-4">Deffered</h3>
         </div>
         {  filteredNotes.length !==0 ?  filteredNotes.filter((task) => (task.status).toLowerCase() === 'deffered')
       .length!==0 ?
