@@ -14,6 +14,10 @@ const userSchema= new Schema({
         type:String,
         required:true,
         min:2,
+    },
+    dob:{
+        type:Date,
+        required:false,
     }
 });
 
