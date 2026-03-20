@@ -15,10 +15,10 @@ const NotesSchema = new Schema({
         type: String,
         required: true, 
     },
-    date:{
-        type: Date,
-        default: moment(new Date()).utc().format('DD/MM/YY')//new Date().format('DD/MM/YYYY'),
-    },
+   date: {
+    type: Date,
+    default: Date.now
+},
     status:{
         type: String,
         default:"Incomplete",

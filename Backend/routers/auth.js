@@ -19,7 +19,8 @@ router.post('/user',[
     }
     try{
     //check the user email is vaildate or not 
-    const user=await User.findOne({email:req.body.email});
+    let user=await User.findOne({email:req.body.email});
+    console.log(user);
     if(user){
       return res.status(400).send("please try to login user error...");
     }
@@ -34,13 +35,17 @@ router.post('/user',[
       email:req.body.email,
       password: secPass,
     });
+    console.log(user);
+    console.log("user created successfully");
     const data={
       user:{
-        id:user.id
+        id:user._id
       }
      }
+     console.log(data);
      const jwtData=jwt.sign(data,jwt_s);
-     res.json({jwtData});
+     console.log(jwtData, "token" );
+    res.json({ success: true, jwtData });
     }
     catch(error){
          console.log(error.message);

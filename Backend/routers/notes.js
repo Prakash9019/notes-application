@@ -36,7 +36,7 @@ router.get('/fetchall', fetchuser,  async (req, res) => {
   // 2: Add a new Note , Login required
 router.post('/addnote', fetchuser, [
   body('title', 'Enter a valid title').isLength({ min: 3 }),
-  body('description', 'Description must be atleast 5 characters').isLength({ min: 5 }),], async (req, res) => {
+  body('description', 'Description must be atleast 1 characters').isLength({ min: 1 }),], async (req, res) => {
       try {
         // using destructing method of javascript for send the requested data to corresponding fields
         console.log(req.body);
@@ -47,6 +47,7 @@ router.post('/addnote', fetchuser, [
           if (!errors.isEmpty()) {
               return res.status(400).json({ errors: errors.array() });
           }
+          console.log("hello world");
           //created a new note with "new" keyword
           //new note object  contain title...
           const note = new Note({

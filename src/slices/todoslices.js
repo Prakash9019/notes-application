@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
 const host = "http://localhost:5000";
 
 const fetchNotes = async () => {
-    const response = await fetch('https://notes-application-api-pi.vercel.app/api/notes/fetchall', {
+    const response = await fetch('http://localhost:5000/api/notes/fetchall', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -38,14 +38,14 @@ export const todoSlice = createSlice({
             state.todos = state.todos.filter((todo) => todo.id !== action.payload)
         },
         updateNoteStatus(state, action) {
-            // Find the index of the note you want to update
-            const indexToUpdate = state.findIndex((note) => note.id === action.payload.id);
-      
-            if (indexToUpdate !== -1) {
-              // Create a new state with the updated note status
-              state[indexToUpdate].status = action.payload.status;
-            }
-          },
+        const indexToUpdate = state.notes.findIndex(
+            (note) => note._id === action.payload.id
+        );
+
+        if (indexToUpdate !== -1) {
+            state.notes[indexToUpdate].status = action.payload.status;
+        }
+    },
           setNotes(state, action) {
             // Replace the existing notesData with the updated array
             return action.payload;

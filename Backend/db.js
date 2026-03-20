@@ -3,7 +3,7 @@ const mongoose=require('mongoose');
 mongoose.set('strictQuery',true);
 // mongodb+srv://Prakash:<password>@cluster0.emqxvew.mongodb.net/?retryWrites=true&w=majority
 const connectDB= ()=>{
-    mongoose.connect("mongodb+srv://plsprakash2003:Surya_2003@cluster0.2yh1df7.mongodb.net/pro?retryWrites=true&w=majority&ssl=true"
+    mongoose.connect("mongodb+srv://plsprakash2003:Surya_2003@cluster0.2yh1df7.mongodb.net/notes_application?retryWrites=true&w=majority&ssl=true"
     );
     console.log("connected");
 }

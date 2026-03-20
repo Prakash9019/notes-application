@@ -1,42 +1,85 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
-  
+import { FaBars, FaTimes, FaHome, FaInfoCircle, FaSignInAlt, FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
+import './Navbar.css';
 
 const Navbar = () => {
-  
-   
-    let navigate=useNavigate();
-    const handleLogout=()=>{
-        localStorage.removeItem('jwtData');
-        navigate('/login');
-    }
-  let location=useLocation();
-    return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div className="container-fluid">
-                <Link className="navbar-brand" onClick="location.href='demographs.html'" to="/demographs#ok">Notes..</Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
-                            <Link className={`nav-link ${location.pathname==="/"? "active": ""}`} aria-current="page" to="/">Home</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className={`nav-link ${location.pathname==="/about"? "active": ""}`} to="/about">About</Link>
-                        </li>
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
-                    </ul>
-                    {!localStorage.getItem('jwtData')?<form className="d-flex"> 
-                    <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
-                    <Link className="btn btn-primary mx-1" to="/signup" role="button">Signup</Link>
-                    </form> : <button onClick={handleLogout} className='btn btn-primary'>Logout</button>}
-                </div>
+  const isLoggedIn = !!localStorage.getItem('jwtData');
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwtData');
+    setShowUserMenu(false);
+    setIsOpen(false);
+    navigate('/login');
+  };
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const isActive = (path) => location.pathname === path;
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
+          📝 TaskFlow
+        </Link>
+
+        <div className="hamburger" onClick={toggleMenu}>
+          {isOpen ? <FaTimes /> : <FaBars />}
+        </div>
+
+        <ul className={`nav-menu ${isOpen ? 'active' : ''}`}>
+          <li className="nav-item">
+            <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`} onClick={() => setIsOpen(false)}>
+              <FaHome /> Home
+            </Link>
+          </li>
+
+          {isLoggedIn && (
+            <>
+              <li className="nav-item">
+                <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`} onClick={() => setIsOpen(false)}>
+                  📊 Dashboard
+                </Link>
+              </li>
+            </>
+          )}
+
+          <li className="nav-item">
+            <Link to="/about" className={`nav-link ${isActive('/about') ? 'active' : ''}`} onClick={() => setIsOpen(false)}>
+              <FaInfoCircle /> About
+            </Link>
+          </li>
+        </ul>
+
+        <div className="nav-auth">
+          {!isLoggedIn ? (
+            <>
+              <Link to="/login" className="nav-btn login-btn" onClick={() => setIsOpen(false)}>
+                <FaSignInAlt /> Login
+              </Link>
+              <Link to="/signup" className="nav-btn signup-btn" onClick={() => setIsOpen(false)}>
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            
+                  <button className="dropdown-item logout" onClick={handleLogout}>
+                    <FaSignOutAlt /> Logout
+                  </button>
+ 
+              )}
             </div>
-        </nav>
-    )
-}
+          </div>
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

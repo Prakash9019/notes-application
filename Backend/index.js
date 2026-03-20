@@ -17,7 +17,8 @@ connectDB();
 // ));
 app.use(cors());
 app.use(express.json());
-
+const aiNotesRoutes = require('./routers/aiNotes.js');
+app.use('/api/ai-notes', aiNotesRoutes);
 
 app.use('/api/auth',require('./routers/auth.js'));
 app.use('/api/notes',require('./routers/notes'));
