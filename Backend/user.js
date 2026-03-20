@@ -3,6 +3,7 @@ const {Schema}= mongoose;
 const userSchema= new Schema({
     username:{
         type: String,
+        unique:true,
     },
     email:{
         type:String,
@@ -14,6 +15,10 @@ const userSchema= new Schema({
         type:String,
         required:true,
         min:2,
+    },
+    dob:{
+        type:Date,
+        required:false,
     }
 });
 
