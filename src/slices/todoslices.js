@@ -1,68 +1,90 @@
-import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const host = "http://localhost:5000";
 
-const fetchNotes = async () => {
-    const response = await fetch('http://localhost:5000/api/notes/fetchall', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            "jwtData": localStorage.getItem('jwtData')
-        }
+// ✅ FETCH
+export const getNotes = createAsyncThunk('notes/getNotes', async () => {
+    console.log('Fetching notes from API...');
+  const res = await fetch(`${host}/api/notes/fetchall`, {
+    headers: { jwtData: localStorage.getItem('jwtData') }
+  });
+  console.log('Fetched notes:', res);
+  const data= await res.json();
+  console.log('Parsed notes data:', data);
+  return data;
+
+});
+
+// ✅ ADD
+export const addNote = createAsyncThunk('notes/addNote', async (data) => {
+  const res = await fetch(`${host}/api/notes/addnote`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      jwtData: localStorage.getItem('jwtData')
+    },
+    body: JSON.stringify(data)
+  });
+  return await res.json();
+});
+
+// ✅ DELETE
+export const deleteNote = createAsyncThunk('notes/deleteNote', async (id) => {
+  await fetch(`${host}/api/notes/deletenote/${id}`, {
+    method: 'DELETE',
+    headers: { jwtData: localStorage.getItem('jwtData') }
+  });
+  return id;
+});
+
+// ✅ EDIT
+export const editNote = createAsyncThunk(
+  'notes/editNote',
+  async ({ id, title, description, status, priority }) => {
+
+    await fetch(`${host}/api/notes/updatenote/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        jwtData: localStorage.getItem('jwtData')
+      },
+      body: JSON.stringify({ title, description, status, priority })
     });
-    const data = await response.json();
-    return data;
-}
 
-export const getNotes = createAsyncThunk('todo/getNotes', async () => {
-    const notes = await fetchNotes();
-    console.log("fetching data from the redux "+notes.length);
-    return notes;
-});
+    // return updated data for UI
+    return { id, title, description, status, priority };
+  }
+);
 
-export const todoSlice = createSlice({
-    name: 'todo',
-    initialState: {
-        todos: [{ id: 1, text: "Hello world" }],
-        notes: [],
-    },
-    reducers: {
-        addTodo: (state, action) => {
-            const todo = {
-                id: nanoid(),
-                text: action.payload
-            }
-            state.todos.push(todo)
-        },
-        removeTodo: (state, action) => {
-            state.todos = state.todos.filter((todo) => todo.id !== action.payload)
-        },
-        updateNoteStatus(state, action) {
-        const indexToUpdate = state.notes.findIndex(
-            (note) => note._id === action.payload.id
-        );
-
-        if (indexToUpdate !== -1) {
-            state.notes[indexToUpdate].status = action.payload.status;
-        }
-    },
-          setNotes(state, action) {
-            // Replace the existing notesData with the updated array
-            return action.payload;
-          },
-    },
-    extraReducers: (builder) => {
-        builder.addCase(getNotes.fulfilled, (state, action) => {
-            while (state.notes.length) {
-                state.notes.pop();
-            }
-            
-            state.notes.push(...action.payload);
-            console.log("length of state note"+state.notes.length);
-        });
-
+const noteSlice = createSlice({
+  name: 'notes',
+  initialState: {
+    notes: [],
+  },
+  reducers: {
+    // 🔥 instant UI update (drag drop)
+    updateNoteStatus(state, action) {
+      const note = state.notes.find(n => n._id === action.payload.id);
+      if (note) note.status = action.payload.status;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getNotes.fulfilled, (state, action) => {
+        state.notes = action.payload;
+      })
+      .addCase(addNote.fulfilled, (state, action) => {
+        state.notes.push(action.payload);
+      })
+      .addCase(deleteNote.fulfilled, (state, action) => {
+        state.notes = state.notes.filter(n => n._id !== action.payload);
+      })
+      .addCase(editNote.fulfilled, (state, action) => {
+        const note = state.notes.find(n => n._id === action.payload.id);
+        if (note) Object.assign(note, action.payload);
+      });
+  }
 });
 
-export const { addTodo, removeTodo,updateNoteStatus,setNotes } = todoSlice.actions;
-export default todoSlice.reducer;
+export const { updateNoteStatus } = noteSlice.actions;
+export default noteSlice.reducer;

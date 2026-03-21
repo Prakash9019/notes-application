@@ -1,8 +1,6 @@
-
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import noteContext from "../NoteContext";
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNotes } from "../slices/todoslices";
+import { getNotes, editNote } from "../slices/todoslices"; // Imported editNote from Redux
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Input } from 'semantic-ui-react';
@@ -13,11 +11,11 @@ import DropArea from './DropArea';
 import './TaskManager.css';
 
 const TaskManager = () => {
-  const context = useContext(noteContext);
   let navigate = useNavigate();
-  const { editNote } = context;
   const dispatch = useDispatch();
-  const notesData = useSelector(state => state.notes);
+  
+  // FIXED: Properly access the notes array from the Redux store
+  const notesData = useSelector(state => state.notes?.notes || []);
 
   useEffect(() => {
     if (localStorage.getItem('jwtData')) {
@@ -25,7 +23,7 @@ const TaskManager = () => {
     } else {
       navigate("/login");
     }
-  }, [dispatch, navigate, editNote]);
+  }, [dispatch, navigate]);
 
   const ref = useRef(null);
   const refClose = useRef(null);
@@ -63,15 +61,18 @@ const TaskManager = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    editNote(
-      note1.id,
-      note1.title,
-      note1.edescription,
-      note1.estatus,
-      note1.epriority
-    );
+    
+    // FIXED: Dispatch the Redux thunk with an object payload
+    dispatch(editNote({
+      id: note1.id,
+      title: note1.title,
+      description: note1.edescription,
+      status: note1.estatus,
+      priority: note1.epriority
+    }));
+    
     refClose.current.click();
-    toast("Note Updated Successfully!");
+    toast.success("Note Updated Successfully!");
   };
 
   const onChange = (e) => {
@@ -89,7 +90,15 @@ const TaskManager = () => {
   const onDrop = (i, title, s, pos) => {
     if (active === null || active === undefined) return;
     const newNote = JSON.parse(active);
-    editNote(newNote._id, newNote.title, newNote.description, s, newNote.priority);
+    
+    // FIXED: Dispatch the Redux thunk with an object payload
+    dispatch(editNote({
+      id: newNote._id,
+      title: newNote.title,
+      description: newNote.description,
+      status: s,
+      priority: newNote.priority
+    }));
   };
 
   const handleSearchChange = (e) => {
@@ -112,10 +121,10 @@ const TaskManager = () => {
       const data = await response.json();
       setAiInsights(data);
       setShowAiPanel(true);
-      toast("AI Insights Generated!");
+      toast.success("AI Insights Generated!");
     } catch (error) {
       console.error('Error fetching insights:', error);
-      toast("Failed to generate insights");
+      toast.error("Failed to generate insights");
     } finally {
       setAiLoading(false);
     }
@@ -123,9 +132,9 @@ const TaskManager = () => {
 
   // Filter logic
   const filteredNotes = notesData.filter((note) => {
-    const titleMatches = note.title.toLowerCase().includes(searchInput.toLowerCase());
+    const titleMatches = note?.title?.toLowerCase().includes(searchInput.toLowerCase());
     const priorityMatches = !selectedPriority || 
-      note.priority.toLowerCase() === selectedPriority.toLowerCase();
+      note?.priority?.toLowerCase() === selectedPriority.toLowerCase();
     
     const date1 = new Date(note.date);
     const date2 = new Date(startDate);
@@ -217,13 +226,13 @@ const TaskManager = () => {
               className={`view-btn ${viewMode === 'kanban' ? 'active' : ''}`}
               onClick={() => setViewMode('kanban')}
             >
-              📊 Kanban
+              Kanban
             </button>
             <button
               className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
               onClick={() => setViewMode('list')}
             >
-              📋 List
+              List
             </button>
           </div>
 
@@ -232,7 +241,7 @@ const TaskManager = () => {
             onClick={fetchAiInsights}
             disabled={aiLoading}
           >
-            {aiLoading ? <span className='custom-spinner'></span> : '🤖 AI Insights'}
+            {aiLoading ? <span className='custom-spinner'></span> : 'AI Insights'}
           </button>
         </div>
       </div>
@@ -241,8 +250,8 @@ const TaskManager = () => {
       {showAiPanel && aiInsights && (
         <div className="ai-insights-panel">
           <div className="panel-header">
-            <h3>🤖 AI Productivity Insights</h3>
-            <button onClick={() => setShowAiPanel(false)} className="close-btn">✕</button>
+            <h3>AI Productivity Insights</h3>
+            <button onClick={() => setShowAiPanel(false)} className="close-btn">X</button>
           </div>
           <div className="panel-content">
             <div className="metrics-grid">
@@ -264,7 +273,7 @@ const TaskManager = () => {
               </div>
             </div>
             <div className="recommendations">
-              <h4>📋 Recommendations:</h4>
+              <h4>Recommendations:</h4>
               <p>{aiInsights.recommendations}</p>
             </div>
           </div>

@@ -63,37 +63,32 @@ const NoteState=(props)=>{
       }
 
      // Edit a Note
-  const editNote = async (id,title,description,status,priority) => {
- 
-  //  console.log(id);
-  //  console.log(id._id);
-    // API Call 
-    const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+const editNote = async (id, title, description, status, priority) => {
+
+  // ✅ 1. Update UI instantly (optimistic update)
+  setNotes(prev =>
+    prev.map(note =>
+      note._id === id
+        ? { ...note, title, description, status, priority }
+        : note
+    )
+  );
+
+  try {
+    // ✅ 2. Backend sync
+    await fetch(`${host}/api/notes/updatenote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        "jwtData": localStorage.getItem('jwtData')
+        jwtData: localStorage.getItem('jwtData')
       },
-      body: JSON.stringify({id,title,description,status,priority})
+      body: JSON.stringify({ id, title, description, status, priority })
     });
-    const json = await response.json(); 
-     
-     let newNotes = JSON.parse(JSON.stringify(json))
-    // Logic to edit in client
-    for (let index = 0; index < newNotes.length; index++) {
 
-      const element = newNotes[index];
-      console.log("hiiii"+element);
-      if (element._id === id) {
-        newNotes[index].title = title;
-        newNotes[index].description = description;
-        newNotes[index].status=status;
-        newNotes[index].priority=priority;
-        break; 
-      }
-    }  
-    setNotes(newNotes);
+  } catch (error) {
+    console.error("Update failed:", error);
   }
+};
 
 
     //for the explaination of context api

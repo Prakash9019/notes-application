@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle, FaGithub } from 'react-icons/fa';
-import './Auth.css';
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight, FaSpinner } from 'react-icons/fa';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -31,40 +29,29 @@ const Login = () => {
       toast.error("Password is required");
       return false;
     }
-    if (credentials.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return false;
-    }
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
 
     setLoading(true);
     try {
       const response = await axios.post(
         'http://localhost:5000/api/auth/login',
-        {
-          email: credentials.email,
-          password: credentials.password,
-        }
+        { email: credentials.email, password: credentials.password }
       );
 
       const json = response.data;
-
-      if (json.sucess) {
+      if (json.sucess || json.success) { // Handle potential typo in backend
         localStorage.setItem('jwtData', json.jwtData);
-        console.log('Token saved:', json.jwtData);
-        toast.success("✓ Login Successful!");
-        setTimeout(() => navigate("/"), 1000);
+        toast.success("Login Successful!");
+        setTimeout(() => navigate("/dashboard"), 1000);
       } else {
         toast.error(json.errors?.[0]?.msg || "Login failed");
       }
     } catch (error) {
-      console.error('Login error:', error);
       if (error.response?.status === 400) {
         toast.error("Invalid email or password");
       } else if (error.response?.status === 500) {
@@ -77,30 +64,40 @@ const Login = () => {
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    toast.info(`${provider} login coming soon!`);
-  };
-
   return (
-    <div className="auth-container">
-      <div className="auth-background">
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center px-4 py-12 relative overflow-hidden transition-colors duration-300">
+      
+      {/* Premium Animated Background Elements */}
+      <div className="absolute inset-0 pointer-events-none flex justify-center items-center">
+        <div className="w-[30rem] h-[30rem] bg-indigo-500/20 dark:bg-indigo-600/20 rounded-full blur-3xl absolute -top-20 -left-20 animate-pulse"></div>
+        <div className="w-[30rem] h-[30rem] bg-purple-500/20 dark:bg-purple-600/20 rounded-full blur-3xl absolute -bottom-20 -right-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="auth-wrapper">
-        <div className="auth-card">
-          <div className="auth-header">
-            <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to your TaskFlow account</p>
+      {/* Main Card Container */}
+      <div className="w-full max-w-md relative z-10">
+        
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-4 shadow-lg shadow-indigo-500/30">
+            <span className="text-2xl text-white font-bold">✓</span>
           </div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
+            Welcome Back
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Sign in to your TaskFlow account to continue
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
-            {/* Email Field */}
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
-              <div className="input-wrapper">
-                <FaEnvelope className="input-icon" />
+        {/* Form Card */}
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-800/50 overflow-hidden">
+          <form onSubmit={handleSubmit} className="p-8 space-y-5">
+            
+            {/* Email */}
+            <div className="space-y-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+              <div className="relative">
+                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="email"
                   id="email"
@@ -108,132 +105,69 @@ const Login = () => {
                   value={credentials.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="form-input"
+                  className="w-full pl-11 pr-4 py-3 text-sm bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                   disabled={loading}
                   required
                 />
               </div>
             </div>
 
-            {/* Password Field */}
-            <div className="form-group">
-              <div className="password-header">
-                <label htmlFor="password" className="form-label">Password</label>
-                <Link to="/forgot-password" className="forgot-password">
-                  Forgot?
-                </Link>
+            {/* Password */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <Link to="/forgot-password" className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-medium transition-colors">Forgot?</Link>
               </div>
-              <div className="input-wrapper">
-                <FaLock className="input-icon" />
+              <div className="relative">
+                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   value={credentials.password}
                   onChange={handleChange}
-                  placeholder="Enter your password"
-                  className="form-input"
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-11 py-3 text-sm bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                   disabled={loading}
                   required
                 />
                 <button
                   type="button"
-                  className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   disabled={loading}
                 >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  {showPassword ? <FaEyeSlash className="w-4 h-4" /> : <FaEye className="w-4 h-4" />}
                 </button>
               </div>
-            </div>
-
-            {/* Remember Me */}
-            <div className="remember-me">
-              <input
-                type="checkbox"
-                id="remember"
-                className="checkbox"
-                disabled={loading}
-              />
-              <label htmlFor="remember" className="checkbox-label">
-                Remember me
-              </label>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="auth-button"
               disabled={loading}
+              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg hover:shadow-indigo-500/30 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
             >
               {loading ? (
-                <>
-                  <span className="spinner"></span>
-                  Signing in...
-                </>
+                <FaSpinner className="w-5 h-5 animate-spin" />
               ) : (
-                "Sign In"
+                <>Sign In <FaArrowRight className="w-4 h-4" /></>
               )}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="divider">
-            <span>Or continue with</span>
-          </div>
-
-          {/* Social Buttons */}
-          <div className="social-buttons">
-            <button
-              type="button"
-              className="social-button"
-              onClick={() => handleSocialLogin("Google")}
-              disabled={loading}
+          {/* Bottom Links Section */}
+          <div className="px-8 pb-8 pt-2 bg-white/50 dark:bg-gray-900/50">
+            <div className="relative flex items-center justify-center mb-6">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-gray-800"></div></div>
+              <span className="relative px-4 text-xs font-medium text-gray-500 bg-white dark:bg-gray-900">New to TaskFlow?</span>
+            </div>
+            <Link
+              to="/signup"
+              className="w-full flex items-center justify-center py-3 px-4 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 rounded-xl font-medium transition-all active:scale-[0.98]"
             >
-              <FaGoogle /> Google
-            </button>
-            <button
-              type="button"
-              className="social-button"
-              onClick={() => handleSocialLogin("GitHub")}
-              disabled={loading}
-            >
-              <FaGithub /> GitHub
-            </button>
-          </div>
-
-          {/* Signup Link */}
-          <p className="auth-footer">
-            Don't have an account? <Link to="/signup" className="link">Sign up</Link>
-          </p>
-        </div>
-
-        {/* Right Section - Features */}
-        <div className="auth-features">
-          <div className="features-header">
-            <h2>Why TaskFlow?</h2>
-          </div>
-          <div className="feature-list">
-            <div className="feature-item">
-              <div className="feature-icon">✓</div>
-              <h3>Smart Task Management</h3>
-              <p>Organize with priority and status tracking</p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">🤖</div>
-              <h3>AI-Powered</h3>
-              <p>Intelligent suggestions and recommendations</p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">📊</div>
-              <h3>Analytics</h3>
-              <p>Track productivity with insights</p>
-            </div>
-            <div className="feature-item">
-              <div className="feature-icon">🔒</div>
-              <h3>Secure</h3>
-              <p>Your data is protected with encryption</p>
-            </div>
+              Create an account
+            </Link>
           </div>
         </div>
       </div>

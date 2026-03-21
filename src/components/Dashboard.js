@@ -1,24 +1,31 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import noteContext from "../NoteContext";
+import { getNotes, updateNoteStatus, addNote, editNote } from "../slices/todoslices";
 import { useDispatch, useSelector } from 'react-redux';
-import { getNotes } from "../slices/todoslices";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { Input } from 'semantic-ui-react';
 import { toast } from 'react-toastify';
 import TaskCard from './TaskCard';
 import DropArea from './DropArea';
+import Sidebar from './Sidebar';
+import StatsCards from './StatsCards';
+import FilterChips from './FilterChips';
+import TaskModal from './TaskModal';
+import { FaPlus, FaList, FaTh, FaSearch } from 'react-icons/fa';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const context = useContext(noteContext);
+  
+  // const context = useContext(noteContext);
   const navigate = useNavigate();
-  const { addNote, editNote } = context;
+  // const { addNote, editNote } = context;
   const dispatch = useDispatch();
-  const notesData = useSelector(state => state.notes);
-  console.log(notesData);
-  // Check authentication
+const notesData = useSelector(state => {
+  // If your Redux store saves it directly as an array (state.notes):
+  if (Array.isArray(state.notes)) {
+    return state.notes;
+  }
+  // If your Redux store saves it inside an object (state.notes.notes):
+  return state.notes?.notes || [];
+});
   useEffect(() => {
     const token = localStorage.getItem('jwtData');
     if (!token) {
@@ -27,380 +34,271 @@ const Dashboard = () => {
       return;
     }
     dispatch(getNotes());
+    console.log('Notes fetched on dashboard load:', notesData);
   }, [dispatch, navigate]);
+  useEffect(() => {
+    if (notesData && notesData.length > 0) {
+      console.log('Backend data successfully loaded into Redux:', notesData);
+    }
+  }, [notesData]);
 
-  // State for add task modal
+  // State for task modals
   const [showAddTask, setShowAddTask] = useState(false);
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    status: "pending",
-    priority: "p1"
-  });
-
-  // State for edit task
-  const ref = useRef(null);
-  const refClose = useRef(null);
-  const [editTask, setEditTask] = useState({
-    id: "",
-    title: "",
-    edescription: "",
-    estatus: "",
-    epriority: ""
-  });
+  const [showEditTask, setShowEditTask] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
 
   // Filters and search
   const [searchInput, setSearchInput] = useState('');
   const [selectedPriority, setSelectedPriority] = useState('');
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [sortBy, setSortBy] = useState('date');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [viewMode, setViewMode] = useState('kanban');
-
-  // Handle add new task
-  const handleAddTask = (e) => {
-    e.preventDefault();
-    if (!newTask.title.trim() || !newTask.description.trim()) {
-      toast.error("Title and description are required!");
-      return;
-    }
-    
-    addNote(newTask.title, newTask.description, newTask.status, newTask.priority);
-    setNewTask({ title: "", description: "", status: "pending", priority: "p1" });
-    setShowAddTask(false);
-    toast.success("Task added successfully!");
-  };
-
-  // Handle edit task
-  const updateNote = (currentNote) => {
-    ref.current.click();
-    setEditTask({
-      id: currentNote._id,
-      title: currentNote.title,
-      edescription: currentNote.description,
-      estatus: currentNote.status,
-      epriority: currentNote.priority
-    });
-  };
-
-  const handleEditSubmit = (e) => {
-    e.preventDefault();
-    editNote(editTask.id, editTask.title, editTask.edescription, editTask.estatus, editTask.epriority);
-    refClose.current.click();
-    toast.success("Task updated successfully!");
-  };
 
   // Drag and drop
   const [active, setactive] = useState(null);
 
-  const onDrop = (status) => {
-    if (active === null || active === undefined) return;
-    const draggedNote = JSON.parse(active);
-    editNote(draggedNote._id, draggedNote.title, draggedNote.description, status, draggedNote.priority);
+  // Handle add new task - WRAP EXISTING LOGIC
+const handleAddTask = (formData) => {
+  if (!formData.title.trim() || !formData.description.trim()) {
+    toast.error("Title and description are required!");
+    return;
+  }
+  
+  // Dispatch the Redux action with a single object payload
+  dispatch(addNote({
+    title: formData.title,
+    description: formData.description,
+    status: formData.status,
+    priority: formData.priority
+  }));
+  
+  setShowAddTask(false);
+  toast.success("Task added successfully!");
+};
+  // Handle edit task - WRAP EXISTING LOGIC
+  const handleEditTask = (currentNote) => {
+    setEditingTask(currentNote);
+    setShowEditTask(true);
   };
- 
-  // Filter and sort logic
-  const filteredNotes = notesData.filter((note) => {
-    const titleMatches = note.title.toLowerCase().includes(searchInput.toLowerCase());
-    const priorityMatches = !selectedPriority || note.priority.toLowerCase() === selectedPriority.toLowerCase();
-    
-    const date1 = new Date(note.date);
-    const date2 = startDate ? new Date(startDate) : null;
-    const date3 = endDate ? new Date(endDate) : null;
-    const dateInRange = (!date2 || date1 >= date2) && (!date3 || date1 <= date3);
 
-    return titleMatches && priorityMatches && dateInRange;
-  });
- console.log("length of filtered note"+filteredNotes);
-  const sortedNotes = [...filteredNotes].sort((a, b) => {
-    switch (sortBy) {
-      case 'priority':
-        const priorityMap = { p0: 3, p1: 2, p2: 1 };
-        return (priorityMap[b.priority] || 0) - (priorityMap[a.priority] || 0);
-      case 'name':
-        return a.title.localeCompare(b.title);
-      case 'status':
-        return a.status.localeCompare(b.status);
-      default:
-        return new Date(b.date) - new Date(a.date);
-    }
+const handleUpdateTask = (formData) => {
+  if (!editingTask) return;
+  
+  // Dispatch the Redux action
+  dispatch(editNote({
+    id: editingTask._id,
+    title: formData.title,
+    description: formData.description,
+    status: formData.status,
+    priority: formData.priority
+  }));
+  
+  setShowEditTask(false);
+  setEditingTask(null);
+  toast.success("Task updated successfully!");
+};
+
+const onDrop = (status) => {
+  if (!active) return;
+
+  const draggedNote = active;
+
+  // ✅ Update Redux instantly
+  dispatch(updateNoteStatus({
+    id: draggedNote._id,
+    status
+  }));
+
+  // ✅ Backend call
+  dispatch(editNote({
+    id: active._id,
+    title: active.title,
+    description: active.description,
+    status,
+    priority: active.priority
+  }));
+};
+
+  // Filter and sort logic - PRESERVE EXISTING LOGIC
+// Filter and sort logic - PRESERVE EXISTING LOGIC
+  const filteredNotes = (notesData || []).filter((note) => {
+    const titleMatches = note?.title?.toLowerCase().includes(searchInput.toLowerCase());
+    const priorityMatches = !selectedPriority || note?.priority?.toLowerCase() === selectedPriority.toLowerCase();
+    const statusMatches = !selectedStatus || note?.status?.toLowerCase() === selectedStatus.toLowerCase();
+
+    return titleMatches && priorityMatches && statusMatches;
   });
 
+  // Group by status - PRESERVE EXISTING LOGIC
   const groupedByStatus = {
-    pending: sortedNotes.filter(n => n.status === 'pending'),
-    inProgress: sortedNotes.filter(n => n.status === 'inProgress'),
-    completed: sortedNotes.filter(n => n.status === 'completed'),
-    deployed: sortedNotes.filter(n => n.status === 'deployed'),
+    pending: filteredNotes.filter(n => n.status === 'pending'),
+    inprogress: filteredNotes.filter(n => n.status === 'inprogress'),
+    completed: filteredNotes.filter(n => n.status === 'completed'),
+    deployed: filteredNotes.filter(n => n.status === 'deployed'),
   };
 
   return (
-    <div className="dashboard">
-      {/* Dashboard Header */}
-      <div className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">My Dashboard</h1>
-          <p className="dashboard-subtitle">Manage your tasks efficiently</p>
-        </div>
-        <button className="btn btn-primary btn-add-task" onClick={() => setShowAddTask(true)}>
-          ➕ Add New Task
-        </button>
-      </div>
+    <div className="flex">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {/* Toolbar */}
-      <div className="toolbar">
-        <Input
-          icon="search"
-          placeholder="Search tasks..."
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          className="search-input"
-        />
-
-        <select value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)} className="filter-select">
-          <option value="">All Priorities</option>
-          <option value="p0">Critical (p0)</option>
-          <option value="p1">High (p1)</option>
-          <option value="p2">Normal (p2)</option>
-        </select>
-
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="filter-select">
-          <option value="date">Sort by Date</option>
-          <option value="priority">Sort by Priority</option>
-          <option value="name">Sort by Name</option>
-          <option value="status">Sort by Status</option>
-        </select>
-
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          placeholderText="Start Date"
-          className="date-picker"
-        />
-        
-        <DatePicker
-          selected={endDate}
-          onChange={(date) => setEndDate(date)}
-          placeholderText="End Date"
-          className="date-picker"
-        />
-
-        <div className="view-toggle">
+      {/* Main Content */}
+      <main className="flex-1 ml-64 pt-16 pb-12 px-8 lg:px-10 bg-bg-light dark:bg-bg-dark transition-colors duration-300">
+        {/* Dashboard Header */}
+        <div className="flex items-center justify-between mb-12 gap-6">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-text-light dark:text-text-dark mb-2">
+              My Tasks
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-base">
+              Manage and organize your work efficiently
+            </p>
+          </div>
           <button
-            className={`view-btn ${viewMode === 'kanban' ? 'active' : ''}`}
-            onClick={() => setViewMode('kanban')}
+            onClick={() => {
+              setEditingTask(null);
+              setShowAddTask(true);
+            }}
+            className="flex items-center gap-2 px-6 py-3.5 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:scale-105 active:scale-95 whitespace-nowrap"
           >
-            📊 Kanban
-          </button>
-          <button
-            className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
-            onClick={() => setViewMode('list')}
-          >
-            📋 List
+            <FaPlus className="w-4 h-4" /> New Task
           </button>
         </div>
-      </div>
 
-      {/* Task Statistics */}
-      <div className="task-stats">
-        <div className="stat-card">
-          <div className="stat-icon">📋</div>
-          <div className="stat-info">
-            <span className="stat-number">{notesData.length}</span>
-            <span className="stat-label">Total Tasks</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">⏳</div>
-          <div className="stat-info">
-            <span className="stat-number">{groupedByStatus.pending.length}</span>
-            <span className="stat-label">Pending</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">🔄</div>
-          <div className="stat-info">
-            <span className="stat-number">{groupedByStatus.inProgress.length}</span>
-            <span className="stat-label">In Progress</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon">✅</div>
-          <div className="stat-info">
-            <span className="stat-number">{groupedByStatus.completed.length}</span>
-            <span className="stat-label">Completed</span>
-          </div>
-        </div>
-      </div>
+        {/* Stats Cards */}
+        <StatsCards tasks={notesData || []} />
 
-      {/* Kanban Board / List View */}
-      {viewMode === 'kanban' ? (
-        <div className="kanban-board">
-          {['pending', 'inProgress', 'completed', 'deployed'].map(status => (
-            <div key={status} className={`kanban-column column-${status}`}>
-              <div className="column-header">
-                <h3>{status === 'inProgress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1)}</h3>
-                <span className="task-count">{groupedByStatus[status].length}</span>
-              </div>
-              <DropArea
-                status={status}
-                onDrop={() => onDrop(status)}
-                notes={groupedByStatus[status]}
-                onUpdateNote={updateNote}
-                setactive={setactive}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="list-view">
-          {sortedNotes.map((note) => (
-            <TaskCard
-              key={note._id}
-              task={note}
-              onUpdate={updateNote}
-              setactive={setactive}
+        {/* Search Bar */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 bg-surface-light dark:bg-surface-dark px-5 py-4 rounded-xl shadow-card border border-transparent hover:border-gray-100 dark:hover:border-gray-800 transition-all duration-300">
+            <FaSearch className="text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search tasks by title..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-text-light dark:text-text-dark placeholder-gray-400 dark:placeholder-gray-600 text-base"
             />
-          ))}
+          </div>
         </div>
-      )}
+
+        {/* Filters */}
+        <FilterChips
+          selectedPriority={selectedPriority}
+          setSelectedPriority={setSelectedPriority}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+        />
+
+        <div className="flex items-center mb-8">
+          <div className="flex p-1 rounded-xl bg-gray-100 dark:bg-gray-800">
+            <button
+              onClick={() => setViewMode('kanban')}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                viewMode === 'kanban'
+                  ? ' dark:bg-gray-900 shadow-sm text-gray-900 dark:text-white'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+              }`}
+            >
+              <FaTh className="w-4 h-4" />
+              Kanban
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                viewMode === 'list'
+                  ? ' dark:bg-gray-900 shadow-sm text-gray-900 dark:text-white'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+              }`}
+            >
+              <FaList className="w-4 h-4" />
+              List
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        {viewMode === 'kanban' ? (
+          // Kanban Board View
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { key: 'pending', label: 'Pending', icon: '📋', color: 'blue' },
+              { key: 'inprogress', label: 'In Progress', icon: '🔄', color: 'purple' },
+              { key: 'completed', label: 'Completed', icon: '✅', color: 'green' },
+              { key: 'deployed', label: 'Deployed', icon: '🚀', color: 'indigo' },
+            ].map(column => (
+              <div
+                key={column.key}
+                className=" dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 flex flex-col"
+              >
+                {/* Column Header */}
+                <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">{column.icon}</span>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                      {column.label}
+                    </h3>
+                  </div>
+
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+                    {groupedByStatus[column.key].length}
+                  </span>
+                </div>
+
+                {/* Drop Area */}
+                <div className="flex-1 p-5 overflow-y-auto">
+                  <DropArea
+                    onDrop={() => onDrop(column.key)}
+                    notes={groupedByStatus[column.key]}
+                    onUpdateNote={handleEditTask}
+                    setactive={setactive}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          // List View
+          <div>
+            {filteredNotes.length > 0 ? (
+              <div className="space-y-3">
+                {filteredNotes.map(task => (
+                  <TaskCard
+                    key={task._id}
+                    task={task}
+                    updateNote={handleEditTask}
+                    setactive={setactive}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-24 bg-surface-light dark:bg-surface-dark rounded-xl">
+                <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">📭 No tasks found</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Try adjusting your filters or create a new task</p>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
 
       {/* Add Task Modal */}
-      {showAddTask && (
-        <div className="modal-overlay" onClick={() => setShowAddTask(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Add New Task</h2>
-              <button className="close-btn" onClick={() => setShowAddTask(false)}>✕</button>
-            </div>
-            <form onSubmit={handleAddTask}>
-              <div className="form-group">
-                <label>Title *</label>
-                <input
-                  type="text"
-                  value={newTask.title}
-                  onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                  placeholder="Enter task title"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description *</label>
-                <textarea
-                  value={newTask.description}
-                  onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                  placeholder="Enter task description"
-                  rows="4"
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Status</label>
-                  <select value={newTask.status} onChange={(e) => setNewTask({...newTask, status: e.target.value})}>
-                    <option value="pending">Pending</option>
-                    <option value="inProgress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="deployed">Deployed</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Priority</label>
-                  <select value={newTask.priority} onChange={(e) => setNewTask({...newTask, priority: e.target.value})}>
-                    <option value="p0">Critical (p0)</option>
-                    <option value="p1">High (p1)</option>
-                    <option value="p2">Normal (p2)</option>
-                  </select>
-                </div>
-              </div>
-              <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowAddTask(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Add Task
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <TaskModal
+        isOpen={showAddTask && !editingTask}
+        onClose={() => setShowAddTask(false)}
+        onSubmit={handleAddTask}
+        isEditing={false}
+      />
 
       {/* Edit Task Modal */}
-      <button ref={ref} type="button" className="hidden" data-bs-toggle="modal" data-bs-target="#editModal">
-        Launch modal
-      </button>
-
-      <div className="modal fade" id="editModal" tabIndex="-1">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Edit Task</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div className="modal-body">
-              <form>
-                <div className="mb-3">
-                  <label className="form-label">Title</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={editTask.title}
-                    onChange={(e) => setEditTask({...editTask, title: e.target.value})}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Description</label>
-                  <textarea
-                    className="form-control"
-                    value={editTask.edescription}
-                    onChange={(e) => setEditTask({...editTask, edescription: e.target.value})}
-                    rows="3"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Status</label>
-                  <select
-                    className="form-control"
-                    value={editTask.estatus}
-                    onChange={(e) => setEditTask({...editTask, estatus: e.target.value})}
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="inProgress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="deployed">Deployed</option>
-                  </select>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Priority</label>
-                  <select
-                    className="form-control"
-                    value={editTask.epriority}
-                    onChange={(e) => setEditTask({...editTask, epriority: e.target.value})}
-                  >
-                    <option value="p0">Critical (p0)</option>
-                    <option value="p1">High (p1)</option>
-                    <option value="p2">Normal (p2)</option>
-                  </select>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
-                Close
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleEditSubmit}
-                ref={refClose}
-                data-bs-dismiss="modal"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TaskModal
+        isOpen={showEditTask && editingTask !== null}
+        onClose={() => {
+          setShowEditTask(false);
+          setEditingTask(null);
+        }}
+        onSubmit={handleUpdateTask}
+        initialData={editingTask}
+        isEditing={true}
+      />
     </div>
   );
 };
