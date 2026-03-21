@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-const host = "http://localhost:5000";
+const host = "https://notes-application-api-pi.vercel.app";
 
 // ✅ FETCH
 export const getNotes = createAsyncThunk('notes/getNotes', async () => {

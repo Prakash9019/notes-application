@@ -5,7 +5,7 @@ import  NoteContext from "./NoteContext";
 
 const NoteState=(props)=>{
 
-  const host = "http://localhost:5000";
+  const host = "https://notes-application-api-pi.vercel.app";
   // "https://notes-application-api-pi.vercel.app";
  
   const notesInitial = [];
